@@ -1,0 +1,53 @@
+# Python environments, builds and caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Local credentials. Keep only the intentionally blank configuration template.
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.streamlit/secrets.*.toml
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
+.aws/
+
+# Experiment archives, acquired corpora, databases and generated outputs.
+# Essential fixtures belong in tests/fixtures/, proposed questions in benchmarks/.
+# Preserve data/ locally; ignoring it never deletes or alters its contents.
+/data/
+*.sqlite*
+*.db
+*.db-wal
+*.db-shm
+*.log
+/results/
+/outputs/
+/artifacts/
+
+# Workstation and editor state.
+.codex/
+.agents/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

@@ -1,0 +1,24 @@
+{
+  "fixture_notice": "SYNTHETIC OFFLINE TEST ONLY: identifiers and metadata below do not describe real papers",
+  "meta": {"next_cursor": null, "cost_usd": 0.001},
+  "results": [
+    {
+      "id": "https://openalex.org/W1",
+      "title": "SYNTHETIC TEST: adaptive retrieval",
+      "doi": null,
+      "publication_year": 2024,
+      "authorships": [
+        {
+          "author": {"id": "https://openalex.org/A1", "display_name": "TEST AUTHOR"},
+          "institutions": [{"id": "https://openalex.org/I1", "display_name": "TEST INSTITUTION"}]
+        }
+      ],
+      "topics": [{"id": "https://openalex.org/T1", "display_name": "Retrieval"}],
+      "referenced_works": ["https://openalex.org/W2"],
+      "related_works": [],
+      "abstract_inverted_index": {"Adaptive": [0], "retrieval": [1, 3], "reduces": [2]},
+      "cited_by_count": 5,
+      "primary_location": null
+    }
+  ]
+}

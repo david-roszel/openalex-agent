@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "created_at": "2026-11-06T17:15:28.213609+00:00",
+  "count": 39,
+  "sha256": "ae6e1f0261ec9ddaebbacd272d3ce3e12aa0830c3b683e9b6942c7f5ea9d3a96",
+  "ids": [
+    "https://openalex.org/W1",
+    "https://openalex.org/W10",
+    "https://openalex.org/W11",
+    "https://openalex.org/W12",
+    "https://openalex.org/W13",
+    "https://openalex.org/W14",
+    "https://openalex.org/W15",
+    "https://openalex.org/W16",
+    "https://openalex.org/W17",
+    "https://openalex.org/W18",
+    "https://openalex.org/W19",
+    "https://openalex.org/W2",
+    "https://openalex.org/W20",
+    "https://openalex.org/W21",
+    "https://openalex.org/W22",
+    "https://openalex.org/W23",
+    "https://openalex.org/W24",
+    "https://openalex.org/W25",
+    "https://openalex.org/W26",
+    "https://openalex.org/W27",
+    "https://openalex.org/W28",
+    "https://openalex.org/W29",
+    "https://openalex.org/W3",
+    "https://openalex.org/W30",
+    "https://openalex.org/W31",
+    "https://openalex.org/W32",
+    "https://openalex.org/W33",
+    "https://openalex.org/W34",
+    "https://openalex.org/W35",
+    "https://openalex.org/W36",
+    "https://openalex.org/W37",
+    "https://openalex.org/W38",
+    "https://openalex.org/W39",
+    "https://openalex.org/W4",
+    "https://openalex.org/W5",
+    "https://openalex.org/W6",
+    "https://openalex.org/W7",
+    "https://openalex.org/W8",
+    "https://openalex.org/W9"
+  ],
+  "acquisition": [
+    {
+      "source": "SYNTHETIC PUBLIC REGRESSION FIXTURE ONLY"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "work_id": "W1",
+    "preliminary_adequacy": "sufficient"
+  },
+  {
+    "work_id": "W2",
+    "preliminary_adequacy": "sufficient"
+  },
+  {
+    "work_id": "W3",
+    "preliminary_adequacy": "insufficient"
+  }
+]

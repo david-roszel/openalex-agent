@@ -1,0 +1,17 @@
+[
+  {
+    "query_id": "example-1",
+    "question_id": "example-fact-1",
+    "question": "Which aggregation level is explicitly named in the synthetic network example?"
+  },
+  {
+    "query_id": "example-2",
+    "question_id": "example-fact-2",
+    "question": "Which factorization is explicitly named in the synthetic multi-relation example?"
+  },
+  {
+    "query_id": "example-3",
+    "question_id": "example-fact-3",
+    "question": "What verified real-world performance gain does the synthetic automation example establish?"
+  }
+]

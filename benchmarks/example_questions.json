@@ -1,0 +1,17 @@
+[
+  {
+    "id": "example-1",
+    "split": "diagnostic",
+    "question": "What information can be recovered from the synthetic scholarly-network example?"
+  },
+  {
+    "id": "example-2",
+    "split": "diagnostic",
+    "question": "What relation is described in the synthetic multi-relation example?"
+  },
+  {
+    "id": "example-3",
+    "split": "diagnostic",
+    "question": "Does this synthetic automation example establish any real-world performance improvement?"
+  }
+]

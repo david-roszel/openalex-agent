@@ -1,0 +1,8 @@
+{
+  "purpose": "Synthetic correctness fixture; not research evidence",
+  "count": 39,
+  "files": {
+    "manifest.json": "ff26fee8ec91270c2b4d780053587fdaef84219b41d0234da49496da3a132091",
+    "papers.jsonl": "ae6e1f0261ec9ddaebbacd272d3ce3e12aa0830c3b683e9b6942c7f5ea9d3a96"
+  }
+}

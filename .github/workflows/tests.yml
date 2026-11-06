@@ -1,0 +1,28 @@
+name: Offline tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install development and UI dependencies
+        run: python -m pip install -e '.[dev,ui]'
+      - name: Inspect tracked publication files without disclosing secrets
+        run: python scripts/repository_audit.py --staged
+      - name: Run offline suite
+        run: python -m pytest
