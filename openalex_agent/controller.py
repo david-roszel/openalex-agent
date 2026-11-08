@@ -529,6 +529,7 @@ class Controller:
                     action = self._fallback(context)
                     self._log("invalid_decision", {"stage": "planning",
                         "error_code": exc.code if isinstance(exc, PlannerError) else "invalid_action",
+                        "validation_rule": exc.code if isinstance(exc, PlannerError) else str(exc),
                         "rejected_action": attempted,
                         "fallback_action": action.to_dict()})
                 finally:

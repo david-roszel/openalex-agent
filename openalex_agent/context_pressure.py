@@ -159,6 +159,9 @@ def run_pressure(condition, directory, *, seed=0, active_tokens=4096, observatio
         source_ids = {p["id"] for body in observations for p in body.get("top_papers", [])}
         active = [r["input"].get("active_context", serialized(r["input"].get("observation", {}))) for r in requests]
         final_active=active[-1] if active else ""
+        request_texts=[serialized(r['input']) for r in requests]
+        initial_delivery=[r['call'] for r,text in zip(requests,request_texts) if needle in text]
+        correction_delivery=[r['call'] for r,text in zip(requests,request_texts) if expected_needle in text] if correction_at is not None else []
         recovered = [r["input"]["recovered_observation"]["text"] for r in requests if "recovered_observation" in r["input"]]
         management = [r for r in requests if "context_edit" in (r.get("output") or {}) or "read_observation" in (r.get("output") or {})]
         recovery_attempts=[e for e in events if e["kind"]=="context_recovery"]
@@ -173,6 +176,10 @@ def run_pressure(condition, directory, *, seed=0, active_tokens=4096, observatio
             max_active_context_tokens=max((r["study_tokens"]["active_tokens"]+r["study_tokens"]["recovery_tokens"] for r in requests),default=0),
             max_full_input_tokens=max((r["study_tokens"]["full_input_tokens"] for r in requests),default=0),
             all_stream_sources_delivered=versions<=delivered,
+            all_stream_source_excerpts_delivered_to_model=all(any(abstract in text for text in request_texts) for _,_,abstract in versions),
+            initial_evidence_delivered_to_model=bool(initial_delivery),initial_evidence_delivery_calls=initial_delivery,
+            correction_delivered_to_model=bool(correction_delivery) if correction_at is not None else None,
+            correction_delivery_calls=correction_delivery,
             evidence_retained_in_final_active=needle in final_active,
             evidence_omitted_from_selected_view=any(needle not in serialized(o) for o in observations),
             evidence_removed_from_active=any(needle in a and needle not in b for a,b in zip(active,active[1:])),
@@ -200,6 +207,8 @@ def run_pressure(condition, directory, *, seed=0, active_tokens=4096, observatio
     valid = valid and ((source_ratio<1) if condition=="low" else (source_ratio>1) if condition=="medium" else (source_ratio>8))
     valid = valid and len(set(archive_signatures))==1 and len(rows)==len(architectures)
     valid = valid and all(r["stop_reason"]=="planner_stop" for r in rows)
+    valid = valid and all(r['initial_evidence_delivered_to_model'] and r['all_stream_source_excerpts_delivered_to_model']
+                         and (correction_at is None or r['correction_delivered_to_model']) for r in rows)
     from .git_provenance import git_provenance
     report = dict(kind="MEASURED OFFLINE TOKEN DIAGNOSTIC; NOT MODEL PERFORMANCE", condition=condition, seed=seed, git=git_provenance(),
         tokenizer=metadata(), shared_observation_archives= len(set(archive_signatures))==1,

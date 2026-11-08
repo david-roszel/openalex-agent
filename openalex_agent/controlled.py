@@ -3,7 +3,7 @@
 from collections import Counter
 import json
 
-from .actions import ACTION_ARGUMENTS, Action, make_action
+from .actions import ACTION_ARGUMENTS, Action, make_action, RELIABILITY_VERSION
 from .context_planner import ContextPlanner
 from .controller import Controller
 from .corpus import atomic_json
@@ -11,7 +11,14 @@ from .ranking import relevance
 from .selection import score_candidates
 
 ARCHITECTURES = ("standard", "llm", "llm_graph", "clm", "clm_graph")
+META_ARCHITECTURES = ("meta_clm", "meta_clm_graph")
+ALL_ARCHITECTURES = ARCHITECTURES + META_ARCHITECTURES
 GRAPH_FIELDS = {"graph", "candidates", "subgraph", "topic_coverage"}
+
+
+def context_strategy(architecture):
+    return ("none" if architecture == "standard" else "meta_clm" if architecture.startswith("meta_clm")
+            else "clm" if architecture.startswith("clm") else "conventional")
 
 
 class ControlledController(Controller):
@@ -23,13 +30,13 @@ class ControlledController(Controller):
     """
 
     def __init__(self, *args, architecture: str, **kwargs):
-        if architecture not in ARCHITECTURES[1:] or kwargs.get("resume"):
+        if architecture not in ALL_ARCHITECTURES[1:] or kwargs.get("resume"):
             raise ValueError("Choose a controlled agent architecture; interrupted research runs require fresh replay")
         self.architecture = architecture
         self.depths = {}
         super().__init__(*args, method="graph" if architecture.endswith("_graph") else "iterative", **kwargs)
         if isinstance(self.planner, ContextPlanner):
-            expected = "clm" if architecture.startswith("clm") else "conventional"
+            expected = context_strategy(architecture)
             if self.planner.mode != expected:
                 raise ValueError("Planner context policy does not match architecture")
             self.planner.bind(self.directory, self.question, self.budget, self._log, lambda: self.papers)
@@ -157,15 +164,32 @@ class ControlledController(Controller):
     def _export_result(self, seconds):
         result = super()._export_result(seconds)
         result.update(architecture=self.architecture, graph_enabled=self.graph is not None,
-            context_management="clm" if self.architecture.startswith("clm") else "conventional",
+            experimental_implementation_version=RELIABILITY_VERSION,
+            context_management=context_strategy(self.architecture),
             controlled_policy="matched-six-tools-v1")
         if isinstance(self.planner, ContextPlanner):
+            if self.architecture not in META_ARCHITECTURES:
+                result.update(experimental_implementation_version=self.planner.configuration["context_policy"],
+                    context_policy_version=self.planner.configuration["context_policy"],
+                    pending_observation_chars=len(self.planner._pending),
+                    unadmitted_observation_indices=list(self.planner._pending_indices))
             records = self.planner.store.edits
             result.update(context_edits=sum(r["source"] == "model" and r["accepted"] for r in records),
                 rejected_context_edits=sum(r["source"] == "model" and not r["accepted"] for r in records),
                 context_snapshots=len(records), active_context_chars=len(self.planner.store.read()),
                 inference_limits=self.planner.limits.__dict__, evidence_records=self.planner.evidence_records,
                 context_adapter_local_seconds=self.planner.context_local_seconds)
+            if self.architecture in META_ARCHITECTURES:
+                from .meta_context import META_VERSION
+                result.update(experimental_implementation_version=META_VERSION,
+                    meta_reference_revision=self.planner.configuration["reference_revision"],
+                    meta_synchronization_seconds=self.planner.sync_seconds,
+                    meta_reference_syncs=self.planner.store.env.n_ctx_syncs,
+                    meta_reference_meaningful_syncs=self.planner.store.env.n_ctx_syncs_real,
+                    meta_common_limit_rollbacks=self.planner.common_limit_rollbacks,
+                    meta_reference_rollbacks=self.planner.store.budget.n_retry_on_limit,
+                    meta_recovery_calls=self.planner.recovery_calls,
+                    meta_sandbox=self.planner.configuration["sandbox"])
             if self.planner.token_limited:
                 measurements = [json.loads(p.read_text())["study_tokens"] for p in
                                 sorted(self.planner.store.directory.glob("request-*.json"))]

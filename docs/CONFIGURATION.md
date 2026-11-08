@@ -27,3 +27,8 @@ For locally reserved questions, maintain a private list of objects with a
 that optional local list. The public release cannot know an absent private holdout
 set. Do not use an unconfigured guard as evidence of independence or approval.
 No reserved question text or hash list is shipped in this release.
+
+For the seven-method Terra path, the existing hosted settings select the Responses
+transport. Gemini ADC is a separate optional adapter with an isolated SDK; it is
+not configured solely by the chat-completions endpoint variables. See
+[seven-method integration](SEVEN_ARCHITECTURES.md).

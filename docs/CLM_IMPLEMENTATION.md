@@ -29,3 +29,9 @@ shell, arbitrary filesystem access, full chat-role rewriting, provider-native
 context-window control, or compute-cache reuse. It does not reproduce another
 project's training harness or establish equivalent published benchmark scores.
 No superiority claim follows from a successful edit or a synthetic retention run.
+
+The November 8 policy preserves all capacity bounds and accepts validated STOP
+with pending archived observations. Memory-management failures do not justify
+acquisition fallback. See [the versioned correction](CLM_CAPACITY_TERMINATION_CORRECTION.md)
+and [official Meta integration](SEVEN_ARCHITECTURES.md); the latter is a separate
+conversation-editing architecture, not this inspired text-file adaptation.

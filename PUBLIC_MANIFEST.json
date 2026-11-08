@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "release": "public implementation export",
-  "date": "2026-11-06",
+  "release": "seven-method implementation and CLM capacity/termination correction",
+  "date": "2026-11-08",
   "git_history_included": false,
   "credentials_included": false,
   "private_benchmarks_included": false,
@@ -13,765 +13,897 @@
     {
       "path": ".env.example",
       "bytes": 719,
-      "sha256": "a23c3c9d626ce3724652d58b509e57b241e88ebfd007098ae230268e24650968",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "new public material"
+      "sha256": "a23c3c9d626ce3724652d58b509e57b241e88ebfd007098ae230268e24650968"
     },
     {
       "path": ".github/workflows/tests.yml",
       "bytes": 685,
-      "sha256": "b1bda48be90f3def12f0be3df43ee06d0888f7164a931e5802bf8598ebb12be6",
-      "role": "Offline automated CI configuration",
-      "selection": "copied unchanged"
+      "sha256": "b1bda48be90f3def12f0be3df43ee06d0888f7164a931e5802bf8598ebb12be6"
     },
     {
       "path": ".gitignore",
       "bytes": 827,
-      "sha256": "7f79090a582528931130181799f931361c9ac34cd78b615501bcac001cb2fb00",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "7f79090a582528931130181799f931361c9ac34cd78b615501bcac001cb2fb00"
     },
     {
       "path": ".streamlit/config.toml",
       "bytes": 83,
-      "sha256": "aa8081c65e99f93830fde7d5f2bf09e71fa0ea2aa2db9ce2bc1ce4606fa8a277",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "aa8081c65e99f93830fde7d5f2bf09e71fa0ea2aa2db9ce2bc1ce4606fa8a277"
     },
     {
       "path": "PUBLISHING.md",
-      "bytes": 2187,
-      "sha256": "d996801787e49736b908b388d7baadda30b209c4abcdef99da9b6b4b11f59d44",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "new public material"
+      "bytes": 1827,
+      "sha256": "58af5e3d910b78889669185d79df3efa36466fb7d2dae1a3eb569ab5c0c7e8c3"
     },
     {
       "path": "README.md",
-      "bytes": 8385,
-      "sha256": "b74e34231516666705cc85eb6641f2b0d6616dd8f0efdea1ba21993313429cf6",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "new public material"
+      "bytes": 9508,
+      "sha256": "46ef10f9ef6168377391acc3249391befcff2701b6e91db985f715d1fbdd641d"
     },
     {
       "path": "app.py",
       "bytes": 91,
-      "sha256": "b713003d23789040b788ab0f6ab52845b2bc439f947bc23ad9498e3e9731bb4e",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "b713003d23789040b788ab0f6ab52845b2bc439f947bc23ad9498e3e9731bb4e"
     },
     {
       "path": "benchmarks/README.md",
       "bytes": 622,
-      "sha256": "b4d7c719e89bf3816de7138071791832819c9dc11bce66d9add0fdb600ea93a9",
-      "role": "Synthetic public examples only; no empirical question set",
-      "selection": "new public material"
+      "sha256": "b4d7c719e89bf3816de7138071791832819c9dc11bce66d9add0fdb600ea93a9"
     },
     {
       "path": "benchmarks/example_factual_questions.json",
       "bytes": 532,
-      "sha256": "10393f81ff14332ba145bb83cca1d0c6c9810499292ef8f062ba4e6e4efd7d0a",
-      "role": "Synthetic public examples only; no empirical question set",
-      "selection": "new public material"
+      "sha256": "10393f81ff14332ba145bb83cca1d0c6c9810499292ef8f062ba4e6e4efd7d0a"
     },
     {
       "path": "benchmarks/example_questions.json",
       "bytes": 471,
-      "sha256": "0c8aac273008330b3fde6b8b6865384bb04c7a4b177c1b02ef9830e281f1427b",
-      "role": "Synthetic public examples only; no empirical question set",
-      "selection": "new public material"
+      "sha256": "0c8aac273008330b3fde6b8b6865384bb04c7a4b177c1b02ef9830e281f1427b"
     },
     {
       "path": "benchmarks/example_review_candidates.json",
       "bytes": 218,
-      "sha256": "2d281bf8d3e6452101ac9c1bd11885b627822726ca03ba05a79ccbf50c061389",
-      "role": "Synthetic public examples only; no empirical question set",
-      "selection": "new public material"
+      "sha256": "2d281bf8d3e6452101ac9c1bd11885b627822726ca03ba05a79ccbf50c061389"
     },
     {
       "path": "docs/ALGORITHMS.md",
       "bytes": 2441,
-      "sha256": "2b6857c52214fba0d0a980b4db6db1bcf432b16bf44f671b9a892a80f2440349",
-      "role": "Public technical usage/design/methodology",
-      "selection": "new public material"
+      "sha256": "2b6857c52214fba0d0a980b4db6db1bcf432b16bf44f671b9a892a80f2440349"
+    },
+    {
+      "path": "docs/CLM_CAPACITY_TERMINATION_CORRECTION.md",
+      "bytes": 2429,
+      "sha256": "3145f42eeefec3c4ae76aeed1b45cdb6d0a1b0e4efbcade3bf5aa33a58c33b61"
     },
     {
       "path": "docs/CLM_IMPLEMENTATION.md",
-      "bytes": 1991,
-      "sha256": "27a066550021046784bf64670159f49fb111c9f85aee1716f3f32430b056707c",
-      "role": "Public technical usage/design/methodology",
-      "selection": "new public material"
+      "bytes": 2399,
+      "sha256": "5464db0dadcdc015bc4c144e9ef746b3309864c374ecd0757c3c6f4e591026e3"
     },
     {
       "path": "docs/CONFIGURATION.md",
-      "bytes": 1806,
-      "sha256": "81a10959cfae55964f525a52c419183528a052a7d22768b8b79557902ca2c55a",
-      "role": "Public technical usage/design/methodology",
-      "selection": "new public material"
+      "bytes": 2093,
+      "sha256": "52ca78625ab580c624c9fcebb44f03ede734ed99ac2a0f4ee06601764d6a1895"
     },
     {
       "path": "docs/DASHBOARD.md",
-      "bytes": 2415,
-      "sha256": "3b07146afeee350275790804927c2bff54d290263e1c7be6b26a417094313172",
-      "role": "Public technical usage/design/methodology",
-      "selection": "new public material"
+      "bytes": 2644,
+      "sha256": "772d495d974ffb2fe74812f2ff2f6134f5702ec853cd2beed67fb7126488ad90"
     },
     {
       "path": "docs/EVALUATION.md",
       "bytes": 2372,
-      "sha256": "63fdc28f799ec4470bcb8069fc4677421783643fe0d6c88d823033214588f870",
-      "role": "Public technical usage/design/methodology",
-      "selection": "new public material"
+      "sha256": "63fdc28f799ec4470bcb8069fc4677421783643fe0d6c88d823033214588f870"
     },
     {
       "path": "docs/GRAPH_DESIGN.md",
       "bytes": 2183,
-      "sha256": "4112b21d8df87683b635f5ecfce1626e3639da3c2242aa44714d994d07253183",
-      "role": "Public technical usage/design/methodology",
-      "selection": "new public material"
+      "sha256": "4112b21d8df87683b635f5ecfce1626e3639da3c2242aa44714d994d07253183"
     },
     {
       "path": "docs/REPRODUCIBILITY.md",
-      "bytes": 2641,
-      "sha256": "76650ebf4feec6de18c8bcdaeaaa8a3312460ce925fa0374395735a34fd27447",
-      "role": "Public technical usage/design/methodology",
-      "selection": "new public material"
+      "bytes": 3023,
+      "sha256": "5bf2361d8418c8a211089d6c445afb194de9db6f8af82b8d0806be94bbc9f4b8"
+    },
+    {
+      "path": "docs/SEVEN_ARCHITECTURES.md",
+      "bytes": 2448,
+      "sha256": "36a2c491a158e302b0df4ead7ea9142cf6861c1f584e9ef4a84416c23c883278"
     },
     {
       "path": "launch-dashboard.sh",
       "bytes": 338,
-      "sha256": "f130006e7197cbe2c632c97e679f0d80e4dbd45b24d53e47b29c94b807325a05",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "f130006e7197cbe2c632c97e679f0d80e4dbd45b24d53e47b29c94b807325a05"
     },
     {
       "path": "main.py",
       "bytes": 75,
-      "sha256": "b8bbfe6ac5cecbcb04f44e263c44ba86376d12e6bc19038ea4696e07501ffed4",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "b8bbfe6ac5cecbcb04f44e263c44ba86376d12e6bc19038ea4696e07501ffed4"
     },
     {
       "path": "openalex_agent/__init__.py",
       "bytes": 101,
-      "sha256": "e1485d6dc6e144b9a62d8fda7ecc40198612791a8f7ba0f8a1eacf5f2f71274b",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "e1485d6dc6e144b9a62d8fda7ecc40198612791a8f7ba0f8a1eacf5f2f71274b"
+    },
+    {
+      "path": "openalex_agent/_vendor/__init__.py",
+      "bytes": 77,
+      "sha256": "98119551af949dcbda7b14149c44d2789f30fe60d19f0a55eb81b3574d5e0a5f"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/LICENSE",
+      "bytes": 19347,
+      "sha256": "41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/NOTICE",
+      "bytes": 599,
+      "sha256": "ce77ffcc6f7ba8fb321c1f650adb3fd2c6d4e89247487c9585d200a051453f06"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/PROVENANCE.json",
+      "bytes": 1373,
+      "sha256": "2878905cda15d183b013d1f6fbbe64605fb56d5a8489f4983a2b5ee3d55d6f5f"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/__init__.py",
+      "bytes": 77,
+      "sha256": "98119551af949dcbda7b14149c44d2789f30fe60d19f0a55eb81b3574d5e0a5f"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/context_env/__init__.py",
+      "bytes": 77,
+      "sha256": "98119551af949dcbda7b14149c44d2789f30fe60d19f0a55eb81b3574d5e0a5f"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/context_env/edit_gate.py",
+      "bytes": 2554,
+      "sha256": "1cfdb5c83f19dba7ddeede90618d155963faa554dc65e47997d19d2a19581f6c"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/context_env/env.py",
+      "bytes": 13434,
+      "sha256": "414f8f05b93d141374307d797e7cd3ad1c4315810450706e552c312ac9dd6e48"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/context_env/paths.py",
+      "bytes": 1394,
+      "sha256": "9b5a0858269aea18372b1aafae455987b609a2754b12cf75d890f5111bcbd698"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/context_env/types.py",
+      "bytes": 760,
+      "sha256": "0b23407a48df843b542457a2996f773bbbd93add7feca7a8ffeb59ee46d5e63b"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/context_utils/__init__.py",
+      "bytes": 77,
+      "sha256": "98119551af949dcbda7b14149c44d2789f30fe60d19f0a55eb81b3574d5e0a5f"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/context_utils/context_string.py",
+      "bytes": 6936,
+      "sha256": "9a6e96b540fe2ecb339f17397e487d38bdc6ca24962e1f9ef7de8b4c4959e76c"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/utils/__init__.py",
+      "bytes": 77,
+      "sha256": "98119551af949dcbda7b14149c44d2789f30fe60d19f0a55eb81b3574d5e0a5f"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/utils/budget.py",
+      "bytes": 20623,
+      "sha256": "7c63b52676209f55bf327c401c6a1762bb0861408fe96cb5da1534554508dee3"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/utils/finish_policy.py",
+      "bytes": 2754,
+      "sha256": "855ab99579e5ab9d7f7204f751c4918e372893d7c8b64a4abc728a83e4d69c2f"
+    },
+    {
+      "path": "openalex_agent/_vendor/meta_clm/utils/tokens.py",
+      "bytes": 6805,
+      "sha256": "d2c8cfaf0fb0f1ae430e72e774546e469b9cd5f06a4eba119a01d7a0ea972e72"
     },
     {
       "path": "openalex_agent/actions.py",
-      "bytes": 3674,
-      "sha256": "2874398493931a9dcbcb718e5aeeac72fce94ff292c0691966c64bb19014df1d",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 5013,
+      "sha256": "35eaa97280fd5a984c30cdd1f1172904772fbe663db663839c6b3a1e91ecee2b"
     },
     {
       "path": "openalex_agent/agent_demo.py",
       "bytes": 5374,
-      "sha256": "5caec2b2a5115a4aa558c789143dcb5cf9ec014dd7e9fb3550a55ef9ffc8dc76",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "5caec2b2a5115a4aa558c789143dcb5cf9ec014dd7e9fb3550a55ef9ffc8dc76"
     },
     {
       "path": "openalex_agent/agent_state.py",
       "bytes": 5524,
-      "sha256": "edc54497df9e3df92a89d864aa37a948897b2a7188ddb5c302d0dec8174f9e56",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "edc54497df9e3df92a89d864aa37a948897b2a7188ddb5c302d0dec8174f9e56"
     },
     {
       "path": "openalex_agent/cli.py",
-      "bytes": 23070,
-      "sha256": "7a1951ab6ec7a68472bfe5a6c421f84e4cbd9c629f8397efb75f87001cbf7e91",
-      "role": "Released implementation",
-      "selection": "adapted for public boundary"
+      "bytes": 23272,
+      "sha256": "a35b6bf6b928ab49fd2ed8264dd1dc97aa68599734ef849d370cca71a5f9bfeb"
+    },
+    {
+      "path": "openalex_agent/clm_smoke.py",
+      "bytes": 3309,
+      "sha256": "e002e22b27860999d1b4bbf872e6c670d8d3b9918695a41b0d32fe4c0dac8c48"
     },
     {
       "path": "openalex_agent/config.py",
       "bytes": 3221,
-      "sha256": "e5296da148eb23801a58c091c004444fa47225afb7be29407cf95eb6e413e88e",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "e5296da148eb23801a58c091c004444fa47225afb7be29407cf95eb6e413e88e"
     },
     {
       "path": "openalex_agent/context_memory.py",
       "bytes": 7165,
-      "sha256": "2cab8a0143d388a7dbd1687b4a793288f1dee0c22c7575a89abf890a5db5f4e7",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "2cab8a0143d388a7dbd1687b4a793288f1dee0c22c7575a89abf890a5db5f4e7"
     },
     {
       "path": "openalex_agent/context_planner.py",
-      "bytes": 25153,
-      "sha256": "16626b31a0cdd5e13152debcc136bad7685f257f672f81f6e4be754c7c2fe604",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 31047,
+      "sha256": "2ed303552ebe95e2d68814e3c6a4dbf76f0381cba2ff4b31f6773291057e0c73"
     },
     {
       "path": "openalex_agent/context_pressure.py",
-      "bytes": 15404,
-      "sha256": "497e085421ede0d4ac7bcdff44de8f9845e867aa79e10e70c79d0e73e3882623",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 16369,
+      "sha256": "c61c2573e6135115046dd223b09da26e7cf7b3aae1a770f938daa59de71d46eb"
     },
     {
       "path": "openalex_agent/controlled.py",
-      "bytes": 11067,
-      "sha256": "f3799d21f0ad0d4d7674436e52f06749554566179016452e788b9e7895b4b295",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 12699,
+      "sha256": "92818a88bc8aa0889d34b3a35ec8a46b2afc2e1195b04a57be940f29c979fdb7"
     },
     {
       "path": "openalex_agent/controlled_diagnostics.py",
       "bytes": 11870,
-      "sha256": "aca24a26e18d8b0df6a0297ab839bb34875541c5444796c8f23e50fc7e32459d",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "aca24a26e18d8b0df6a0297ab839bb34875541c5444796c8f23e50fc7e32459d"
     },
     {
       "path": "openalex_agent/controller.py",
-      "bytes": 36221,
-      "sha256": "dbd04426f06ad91d94d9338de6b854ad7979b87df5d63314a5b1087cdf2701af",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 36321,
+      "sha256": "57060a8e71354fd55193cfd6758127320b5404c09d6bce6e9460551a89687445"
     },
     {
       "path": "openalex_agent/corpus.py",
       "bytes": 7044,
-      "sha256": "6749cb47b7f600dafda96d61a9bd54d08b650bb19daa0750685c805a8103a936",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "6749cb47b7f600dafda96d61a9bd54d08b650bb19daa0750685c805a8103a936"
     },
     {
       "path": "openalex_agent/dashboard_ui.py",
       "bytes": 25373,
-      "sha256": "2e66b96c4653ee91b7549679286f366dc8f892a36b4d4a9758cf169bdb865476",
-      "role": "Released implementation",
-      "selection": "adapted for public boundary"
+      "sha256": "2e66b96c4653ee91b7549679286f366dc8f892a36b4d4a9758cf169bdb865476"
+    },
+    {
+      "path": "openalex_agent/dataset_integration.py",
+      "bytes": 22544,
+      "sha256": "7f60e910cdae05f7e944e9c99ed4c3a04c169bc6c4d66f8d1e7f1ab5a3fc115b"
+    },
+    {
+      "path": "openalex_agent/development_pilot.py",
+      "bytes": 14169,
+      "sha256": "0d6ef33d646a80ec54c5eb5cf50b41649b76e948b3be71477621e60d8fe62476"
     },
     {
       "path": "openalex_agent/development_review.py",
       "bytes": 10961,
-      "sha256": "0f20cdb245636504f56cb2597e5fe1cc55dc3302a2dc12c4a9a25b0250b6a752",
-      "role": "Released implementation",
-      "selection": "adapted for public boundary"
+      "sha256": "0f20cdb245636504f56cb2597e5fe1cc55dc3302a2dc12c4a9a25b0250b6a752"
     },
     {
       "path": "openalex_agent/evaluation.py",
       "bytes": 4974,
-      "sha256": "356ab9d9b5df6953331c0fb5ecd50255c21af7f61e82c0eecb34cdb7340d9203",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "356ab9d9b5df6953331c0fb5ecd50255c21af7f61e82c0eecb34cdb7340d9203"
     },
     {
       "path": "openalex_agent/evidence_provenance.py",
       "bytes": 2955,
-      "sha256": "6a4cf3ca5a91ebc13e6da9a12114b1081051f2a40fb6a4f9a0cb07ce36683527",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "6a4cf3ca5a91ebc13e6da9a12114b1081051f2a40fb6a4f9a0cb07ce36683527"
+    },
+    {
+      "path": "openalex_agent/evidence_visibility.py",
+      "bytes": 3300,
+      "sha256": "8ff29c2e8c8b5771d27e59fb968d2199453b007d92055242fde711a9e77c5067"
     },
     {
       "path": "openalex_agent/execution_control.py",
       "bytes": 223,
-      "sha256": "fc2b36dd0094ab3d2190166438b36fdedf6ffed41309e61ed1b9788c9eb9bf11",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "fc2b36dd0094ab3d2190166438b36fdedf6ffed41309e61ed1b9788c9eb9bf11"
     },
     {
       "path": "openalex_agent/experiment_dashboard.py",
-      "bytes": 46217,
-      "sha256": "516c2b89b040f2bac412f9a4438e4343b6d0eca862c11c5cd59ceff189e4df6b",
-      "role": "Released implementation",
-      "selection": "adapted for public boundary"
+      "bytes": 46224,
+      "sha256": "7ce5cf1d8d29ba772d91467c6ab9898d1b79abdd55b21ae0d31a5a82803831da"
     },
     {
       "path": "openalex_agent/experiment_integrity.py",
-      "bytes": 1270,
-      "sha256": "c1969ac19fbd57d9394a7c671dea8d27ee9281402d4ce7efa2428f3cb953b6d8",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 1292,
+      "sha256": "cfbef31191363e7574bf5f5c2edbedf31a783a4f3a1789dbdce7b85a6e6b5d72"
     },
     {
       "path": "openalex_agent/experiment_spec.py",
       "bytes": 2091,
-      "sha256": "34c738d2c7e60d79fe0dee4849e23819dc26492974c4515089fd0b01f3aa439c",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "34c738d2c7e60d79fe0dee4849e23819dc26492974c4515089fd0b01f3aa439c"
     },
     {
       "path": "openalex_agent/experiments.py",
-      "bytes": 29019,
-      "sha256": "c4a1d483e67530edb8c73edf07a0ab77d45df678b57d23f8e0d655712da791e8",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 32958,
+      "sha256": "09cd79b02496f8145a61da4a8627aab68f3d1625171e3a3ca0e21fd41719093b"
+    },
+    {
+      "path": "openalex_agent/factorial.py",
+      "bytes": 3808,
+      "sha256": "c0735bd658c1caded9dfd0a13fff8ac6715a1feb568f43b9b4d32d42b8982b48"
     },
     {
       "path": "openalex_agent/factual_protocol.py",
       "bytes": 8539,
-      "sha256": "dfabdc00f05303f44abe68c83fc12f40a83ac82cc5ca47f34c7c9e435d8124a0",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "dfabdc00f05303f44abe68c83fc12f40a83ac82cc5ca47f34c7c9e435d8124a0"
     },
     {
       "path": "openalex_agent/freeze_pilot.py",
       "bytes": 5190,
-      "sha256": "8fc26707848c8b67fd08c176ec0f16960b2b54323ac4e5a12bbdaaf79443fd5c",
-      "role": "Released implementation",
-      "selection": "adapted for public boundary"
+      "sha256": "8fc26707848c8b67fd08c176ec0f16960b2b54323ac4e5a12bbdaaf79443fd5c"
+    },
+    {
+      "path": "openalex_agent/gemini.py",
+      "bytes": 13151,
+      "sha256": "69671aecdd490c6686e49cc1951254db9253ce7df62b762fabf1900b3bde9bad"
+    },
+    {
+      "path": "openalex_agent/gemini_sdk_worker.py",
+      "bytes": 4615,
+      "sha256": "1a2c63b8c52f809dd9a26c63921e90afcbd843d3e242d56e9324da194b732488"
+    },
+    {
+      "path": "openalex_agent/gemini_token_check.py",
+      "bytes": 370,
+      "sha256": "cf41dfd8af0c35755a6282edfcb671412715f47926683c56aedc677008d60985"
+    },
+    {
+      "path": "openalex_agent/gemini_validation.py",
+      "bytes": 2753,
+      "sha256": "9d10d687280725c6ab075a174599d3a17c9455f2832b795d101114d1d1831e82"
     },
     {
       "path": "openalex_agent/git_provenance.py",
       "bytes": 2100,
-      "sha256": "1f3d26e6bb3ec79a62701cf16b0972ab7942857a3fb82650389c8b1e4830a50f",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "1f3d26e6bb3ec79a62701cf16b0972ab7942857a3fb82650389c8b1e4830a50f"
     },
     {
       "path": "openalex_agent/graph.py",
       "bytes": 32087,
-      "sha256": "f3ba834e131e793f38c9c1d2e0940a42e1da2d74223d20ef1ab87248a454f015",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "f3ba834e131e793f38c9c1d2e0940a42e1da2d74223d20ef1ab87248a454f015"
     },
     {
       "path": "openalex_agent/graph_benchmark.py",
       "bytes": 5718,
-      "sha256": "908424732530d48a8b3a7ba5ada8fff1c6c18fcbc9767dcffda44f8db8c9eb40",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "908424732530d48a8b3a7ba5ada8fff1c6c18fcbc9767dcffda44f8db8c9eb40"
     },
     {
       "path": "openalex_agent/graph_expansion.py",
       "bytes": 3294,
-      "sha256": "ee4dd27bc2430f44567823188be691398213adebfcbf94e3ac3dfdba70607727",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "ee4dd27bc2430f44567823188be691398213adebfcbf94e3ac3dfdba70607727"
+    },
+    {
+      "path": "openalex_agent/groq_pilot.py",
+      "bytes": 3974,
+      "sha256": "e8ba82539e2a6b0e1344a3b517d3fc36ae0137714c09ed33a3abad004547e372"
     },
     {
       "path": "openalex_agent/llm.py",
       "bytes": 14344,
-      "sha256": "d1fa889b3783220a11e6cce2854746d550873e4538c3eb6d18eb09d546cc3113",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "d1fa889b3783220a11e6cce2854746d550873e4538c3eb6d18eb09d546cc3113"
+    },
+    {
+      "path": "openalex_agent/meta_context.py",
+      "bytes": 8056,
+      "sha256": "2b31d716031af4e8d0f3c80f7010c7bcb62095163544fbec1fd6c23764cbe268"
+    },
+    {
+      "path": "openalex_agent/meta_planner.py",
+      "bytes": 17528,
+      "sha256": "19fb452f558ef0cc6408eadb8b66917d3f7f237985224da3b8fa53d0c1adae1c"
+    },
+    {
+      "path": "openalex_agent/meta_validation.py",
+      "bytes": 18553,
+      "sha256": "729f37d87c4165ede27685b8dc9ff9986a23d73dc2b9734c3957e82fa1fe08f4"
     },
     {
       "path": "openalex_agent/models.py",
       "bytes": 9402,
-      "sha256": "aba347b1b9f14dde53dda860a5fa1e88f3493aab3248ea1a37c2bcec270467d7",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "aba347b1b9f14dde53dda860a5fa1e88f3493aab3248ea1a37c2bcec270467d7"
     },
     {
       "path": "openalex_agent/openalex.py",
       "bytes": 15201,
-      "sha256": "60257e93339c3921133e0b64dd220d4d886a2c8b92bc340f8e4d67f945039547",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "60257e93339c3921133e0b64dd220d4d886a2c8b92bc340f8e4d67f945039547"
+    },
+    {
+      "path": "openalex_agent/pilot.py",
+      "bytes": 25287,
+      "sha256": "867e81ea18dc4c8f2d058d085817d4cdbd32fbed655b4680ae9b81b18aa48380"
+    },
+    {
+      "path": "openalex_agent/pooled_review.py",
+      "bytes": 27192,
+      "sha256": "265a68e9c8b1585adcde8adc7babdbd1951d1288d58104793bd802fa1ade203a"
+    },
+    {
+      "path": "openalex_agent/quality_collection.py",
+      "bytes": 17688,
+      "sha256": "32b15d627db8626eb6f9ab4e521e4e50f5d604593417d4efc35ca26847c49c4b"
     },
     {
       "path": "openalex_agent/ranking.py",
       "bytes": 767,
-      "sha256": "cd9fc961af87b5c498d2d188a9cda18ed237e590e1b6a8de97751054d9f7c327",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "cd9fc961af87b5c498d2d188a9cda18ed237e590e1b6a8de97751054d9f7c327"
     },
     {
       "path": "openalex_agent/research.py",
       "bytes": 18436,
-      "sha256": "94dddf6fff71a2001efc90a8834ec74c4fe2a9c2cb965e5ecfde8f2165f5d432",
-      "role": "Released implementation",
-      "selection": "adapted for public boundary"
+      "sha256": "94dddf6fff71a2001efc90a8834ec74c4fe2a9c2cb965e5ecfde8f2165f5d432"
     },
     {
       "path": "openalex_agent/research_assessment.py",
-      "bytes": 12206,
-      "sha256": "c097c08588eadbf207bce472ee8d64df51d835cab1ea36744742a3dc2d8a2dfb",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "bytes": 12405,
+      "sha256": "10f052c4c18025a5acc342ecbf5bd5d1e321976eabef24e2df73a053929ccc51"
     },
     {
       "path": "openalex_agent/research_metrics.py",
       "bytes": 9951,
-      "sha256": "02aa375cae6ccc2a9c4efd75d3bd97762f5ee1bd8dc1e3d1d11634b3a6a56158",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "02aa375cae6ccc2a9c4efd75d3bd97762f5ee1bd8dc1e3d1d11634b3a6a56158"
+    },
+    {
+      "path": "openalex_agent/research_smoke.py",
+      "bytes": 2418,
+      "sha256": "c47f0356a0722e94a0c0679cb379985ab54a61e43db8d3179f7bc9c20bbb115f"
+    },
+    {
+      "path": "openalex_agent/responses.py",
+      "bytes": 8479,
+      "sha256": "0e5da51f8cb48275ec0013a175fb6f24d03d4a791dfec8e61e3682c7a539b71b"
     },
     {
       "path": "openalex_agent/selection.py",
       "bytes": 5842,
-      "sha256": "b31a1999fa3fc0a8b43e27a6abd5fd9f302964a4d5c9bccfd68da667593286ac",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "b31a1999fa3fc0a8b43e27a6abd5fd9f302964a4d5c9bccfd68da667593286ac"
     },
     {
       "path": "openalex_agent/selection_benchmark.py",
       "bytes": 2272,
-      "sha256": "47a797f22ae34d35dbd1df1467eb5b15263c500af0c02f79234b10c9da095197",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "47a797f22ae34d35dbd1df1467eb5b15263c500af0c02f79234b10c9da095197"
     },
     {
       "path": "openalex_agent/storage.py",
       "bytes": 3741,
-      "sha256": "3bb2d8f4087e3d83abce37ab19f7673d0779ea64c5cc6ac7964d1ef2f7700d70",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "3bb2d8f4087e3d83abce37ab19f7673d0779ea64c5cc6ac7964d1ef2f7700d70"
     },
     {
       "path": "openalex_agent/token_budget.py",
       "bytes": 2033,
-      "sha256": "e334854f77940958150468d85f381dbc6f0406b4a1e833f745d7c59cb6c79bd7",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "e334854f77940958150468d85f381dbc6f0406b4a1e833f745d7c59cb6c79bd7"
     },
     {
       "path": "openalex_agent/tokenizer_data/LICENSE",
       "bytes": 1078,
-      "sha256": "418cb499b436128d653d79941333a5437b7be2ea9213dcc2f04d15d5d2c51d86",
-      "role": "Packaged offline tokenizer and upstream attribution/license",
-      "selection": "copied unchanged"
+      "sha256": "418cb499b436128d653d79941333a5437b7be2ea9213dcc2f04d15d5d2c51d86"
     },
     {
       "path": "openalex_agent/tokenizer_data/README.md",
       "bytes": 604,
-      "sha256": "9178ab86610afe62b1082fe5adc06eb9d530e93881dae5ae7a7ecb3782e08c26",
-      "role": "Packaged offline tokenizer and upstream attribution/license",
-      "selection": "copied unchanged"
+      "sha256": "9178ab86610afe62b1082fe5adc06eb9d530e93881dae5ae7a7ecb3782e08c26"
     },
     {
       "path": "openalex_agent/tokenizer_data/o200k_base.tiktoken",
       "bytes": 3613922,
-      "sha256": "446a9538cb6c348e3516120d7c08b09f57c36495e2acfffe59a5bf8b0cfb1a2d",
-      "role": "Packaged offline tokenizer and upstream attribution/license",
-      "selection": "copied unchanged"
+      "sha256": "446a9538cb6c348e3516120d7c08b09f57c36495e2acfffe59a5bf8b0cfb1a2d"
     },
     {
       "path": "openalex_agent/web_ui.py",
       "bytes": 21637,
-      "sha256": "0ded859e86433369c2d553f5c813eb79fe381367942f2f54a307d4505e2b5a06",
-      "role": "Released implementation",
-      "selection": "copied unchanged"
+      "sha256": "0ded859e86433369c2d553f5c813eb79fe381367942f2f54a307d4505e2b5a06"
     },
     {
       "path": "pyproject.toml",
-      "bytes": 753,
-      "sha256": "75307793fbe6c7332d0dc06403213890cb517094c45b322766cbad2b61d53495",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "bytes": 867,
+      "sha256": "1653d2ad6017d4001543461015c2eb981b4a19e3ab1cb25307cbd924306de5b5"
+    },
+    {
+      "path": "requirements-gemini.txt",
+      "bytes": 103,
+      "sha256": "c707cb12854f78302d143ebabab51713a1334ed4495b563d722cef4530d9e3d6"
     },
     {
       "path": "requirements-ui.lock.txt",
       "bytes": 1189,
-      "sha256": "89819f9a0ac88e7268e175871fab736aa6a8a34a338446dc43da19bd43b214bf",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "89819f9a0ac88e7268e175871fab736aa6a8a34a338446dc43da19bd43b214bf"
     },
     {
       "path": "requirements.lock.txt",
       "bytes": 561,
-      "sha256": "e3c01c86b57db7fa519005cbf2671073a9ca3b88994bf2112352b8fa93190aa7",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "e3c01c86b57db7fa519005cbf2671073a9ca3b88994bf2112352b8fa93190aa7"
     },
     {
       "path": "requirements.txt",
       "bytes": 10,
-      "sha256": "9d6d2c2e18451cd8eb86a739cbcb1664e4342ef4ae478266a3c333dd4f73674a",
-      "role": "Installation, launch, configuration or public documentation",
-      "selection": "copied unchanged"
+      "sha256": "9d6d2c2e18451cd8eb86a739cbcb1664e4342ef4ae478266a3c333dd4f73674a"
+    },
+    {
+      "path": "scripts/check_offline_corpus.py",
+      "bytes": 2438,
+      "sha256": "06f31850a8e79771c74312bd1999114fcd180e3d73d66fe0c61388429f8b1609"
+    },
+    {
+      "path": "scripts/collect_quality_corpus.py",
+      "bytes": 12511,
+      "sha256": "a5969f5a25639a8dcb609b971989adabdadd5c7f65fd9c0bc4b5809dbebf14ab"
+    },
+    {
+      "path": "scripts/development_pilot.py",
+      "bytes": 1428,
+      "sha256": "ed1e8860c25caf19ce09a13f2ccaa6afe09e5adf8f8102c9c7e5154de96f36e9"
+    },
+    {
+      "path": "scripts/experiment_validity_audit.py",
+      "bytes": 28471,
+      "sha256": "e8c9fff326cc48cf29cfdc4e2f29ea20a7c0d7f771811681dc2b9fcf0d1662ee"
+    },
+    {
+      "path": "scripts/gemini_validation.py",
+      "bytes": 1472,
+      "sha256": "de78b3a43b09d5251dcf88da27a3e5bcb1896c903466767bc38f0a112cea2d8d"
+    },
+    {
+      "path": "scripts/meta_clm_validation.py",
+      "bytes": 1151,
+      "sha256": "7e5e80aad343ce762f3aff47427354a4c19357b1a7bdbeaa0c3cb12f6c408782"
+    },
+    {
+      "path": "scripts/pooled_evaluation.py",
+      "bytes": 2749,
+      "sha256": "849772ca4302b065cc5ac43a547197e86a39f8b25ff44a441427434e0b7cb17f"
+    },
+    {
+      "path": "scripts/prepare_final_datasets.py",
+      "bytes": 1326,
+      "sha256": "6cab4c653c836027daa9df24349b8ff51d61a9edd0503fe9cef01f493d42dd94"
+    },
+    {
+      "path": "scripts/prepare_readiness_artifacts.py",
+      "bytes": 6263,
+      "sha256": "1759eeaf882021dca51e0fa0d7b5750e5803c40012528026a20db06a9aa09666"
+    },
+    {
+      "path": "scripts/report_quality_corpus.py",
+      "bytes": 7665,
+      "sha256": "832796bc7dc0de14436be5a707de4b75fd9ae3d568b0838cd61bc3f70847d99d"
     },
     {
       "path": "scripts/repository_audit.py",
-      "bytes": 7633,
-      "sha256": "07db021d80285997025fa4dcc6eabc29ecd969d8d67ea4a0babd2e80509ed739",
-      "role": "Publication/integrity utilities",
-      "selection": "adapted for public boundary"
+      "bytes": 7660,
+      "sha256": "23942994b52377826893b7424c198616145f0a4fb17fe9ad0845fcd7588d6db0"
+    },
+    {
+      "path": "scripts/smoke_meta_clm_reference.py",
+      "bytes": 7319,
+      "sha256": "7f92bac94aaf17915a65ff80abbd955691656a9732f3a9f5e25e9da1a7c86110"
+    },
+    {
+      "path": "scripts/validate_correction_delivery.py",
+      "bytes": 2330,
+      "sha256": "1a1c19ee96570fb15c8d2bb19070545b63ac04da0d53d345ad66dc53dbad3058"
+    },
+    {
+      "path": "scripts/validate_final_pressure.py",
+      "bytes": 2707,
+      "sha256": "149192725e558b7c82551116458a2747737e8743310e87c626391a76a663d17f"
+    },
+    {
+      "path": "scripts/validate_meta_clm.py",
+      "bytes": 5731,
+      "sha256": "1fc9432a4bd02a94f8bb0b98486805326a667287a008c91e14c6073987ea707c"
     },
     {
       "path": "scripts/verify_manifest.py",
       "bytes": 1008,
-      "sha256": "7d75a60b57a95bc881f0b615d0d8e2d54cb63f2d4ccc9b27919ab595cc0aac97",
-      "role": "Publication/integrity utilities",
-      "selection": "new public material"
+      "sha256": "7d75a60b57a95bc881f0b615d0d8e2d54cb63f2d4ccc9b27919ab595cc0aac97"
+    },
+    {
+      "path": "scripts/verify_quality_acquisition.py",
+      "bytes": 6785,
+      "sha256": "47e16125600b1d7acef4366203ff8bdbbecc745e9002f69cda3bd6b8705d0b52"
     },
     {
       "path": "tests/conftest.py",
       "bytes": 585,
-      "sha256": "7c18b84b4a9da92b96bea0c057ecb43cea506bdef98961c0b25205b7ee625f4f",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "7c18b84b4a9da92b96bea0c057ecb43cea506bdef98961c0b25205b7ee625f4f"
     },
     {
       "path": "tests/fixtures/README.md",
-      "bytes": 565,
-      "sha256": "e3d03a76e8734889188a50a6877ae9ffa0185340a83e9571aa3d5a1e44cb5c91",
-      "role": "Public synthetic regression inputs",
-      "selection": "new public material"
+      "bytes": 872,
+      "sha256": "6426a7e1df78e49d5edc33e36878d23a7b1230b04c65516172a1bb70b6e79a2b"
+    },
+    {
+      "path": "tests/fixtures/gemini_context_schema_probe.py",
+      "bytes": 2473,
+      "sha256": "75e67cefe9b05e0a67508b3eee0e3bfc41216c046b5a7d6a20c0b9d07f3ce382"
+    },
+    {
+      "path": "tests/fixtures/gemini_sdk_serialization_probe.py",
+      "bytes": 4659,
+      "sha256": "dff8cf495d1994e2e324cc5f7e006e335e46bc7bb63a08a0e1dd6b136ef6f6b8"
+    },
+    {
+      "path": "tests/fixtures/meta-context-failed-edits.json",
+      "bytes": 5142,
+      "sha256": "4eb6b2252488e7ef551c39e424790b128666126e1074247c9fb273d327939381"
     },
     {
       "path": "tests/fixtures/openalex-list.synthetic.json",
       "bytes": 888,
-      "sha256": "3af1c17d011b3026a32784d5231defb824a61ecb9172f37060cd9de440aae8a0",
-      "role": "Public synthetic regression inputs",
-      "selection": "copied unchanged"
+      "sha256": "3af1c17d011b3026a32784d5231defb824a61ecb9172f37060cd9de440aae8a0"
     },
     {
       "path": "tests/fixtures/synthetic-corpus/fixture-provenance.json",
       "bytes": 281,
-      "sha256": "8a5511ebaf567fc598b36b2b3c745258269ea4d96fb86f4cf291c2da69607f23",
-      "role": "Public synthetic regression inputs",
-      "selection": "new public material"
+      "sha256": "8a5511ebaf567fc598b36b2b3c745258269ea4d96fb86f4cf291c2da69607f23"
     },
     {
       "path": "tests/fixtures/synthetic-corpus/manifest.json",
       "bytes": 1513,
-      "sha256": "ff26fee8ec91270c2b4d780053587fdaef84219b41d0234da49496da3a132091",
-      "role": "Public synthetic regression inputs",
-      "selection": "new public material"
+      "sha256": "ff26fee8ec91270c2b4d780053587fdaef84219b41d0234da49496da3a132091"
     },
     {
       "path": "tests/fixtures/synthetic-corpus/papers.jsonl",
       "bytes": 23362,
-      "sha256": "ae6e1f0261ec9ddaebbacd272d3ce3e12aa0830c3b683e9b6942c7f5ea9d3a96",
-      "role": "Public synthetic regression inputs",
-      "selection": "new public material"
+      "sha256": "ae6e1f0261ec9ddaebbacd272d3ce3e12aa0830c3b683e9b6942c7f5ea9d3a96"
     },
     {
       "path": "tests/test_agent_cli.py",
       "bytes": 3684,
-      "sha256": "3d2c6d99a8f8222838b78a8e8c431a63e3a0ba2591d1e8a46fe3df455a5630aa",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "3d2c6d99a8f8222838b78a8e8c431a63e3a0ba2591d1e8a46fe3df455a5630aa"
     },
     {
       "path": "tests/test_agent_milestone3.py",
       "bytes": 16853,
-      "sha256": "668307ea04407195cff972ad6cd0447d04d41b6b0135534fee848feeff708aa8",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "668307ea04407195cff972ad6cd0447d04d41b6b0135534fee848feeff708aa8"
     },
     {
       "path": "tests/test_clm_context.py",
       "bytes": 15412,
-      "sha256": "7a64e85471bf949f9c5a82557c4bfcd3849fb9e7e0b10114c8bf0cf60152d5db",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "7a64e85471bf949f9c5a82557c4bfcd3849fb9e7e0b10114c8bf0cf60152d5db"
+    },
+    {
+      "path": "tests/test_clm_pending_capacity.py",
+      "bytes": 11849,
+      "sha256": "ce3b3670df37737aef5d32495c49d315415207600748c51edb760176c6f863dd"
     },
     {
       "path": "tests/test_controlled_graph.py",
       "bytes": 4602,
-      "sha256": "aafc9fb6dae9e22b15d405e7cbaa1618979a7cfd0562ff990c74b9dc4afdf0cc",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "aafc9fb6dae9e22b15d405e7cbaa1618979a7cfd0562ff990c74b9dc4afdf0cc"
     },
     {
       "path": "tests/test_controller.py",
       "bytes": 6664,
-      "sha256": "31e07f25c19aa6b473d6e60bf7a24bca1c69b0df4bf785de1b9b1d2a3a6f739d",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "31e07f25c19aa6b473d6e60bf7a24bca1c69b0df4bf785de1b9b1d2a3a6f739d"
     },
     {
       "path": "tests/test_corpus_selection.py",
       "bytes": 2821,
-      "sha256": "9c690f997b9a07ad8dd3158f75ddfcf24fb43f8bc45f4f284d0b9e00de894be7",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "9c690f997b9a07ad8dd3158f75ddfcf24fb43f8bc45f4f284d0b9e00de894be7"
+    },
+    {
+      "path": "tests/test_correction_delivery.py",
+      "bytes": 1208,
+      "sha256": "b5770580300b63d14b39863ae8a570911742731a71b0270324f40340b66a672b"
     },
     {
       "path": "tests/test_dashboard_ui.py",
-      "bytes": 5187,
-      "sha256": "80ecf3368aae2400ffa78f6256a9950db46af7953b9b17beb4d6e5b7be637c5f",
-      "role": "Offline automated correctness tests",
-      "selection": "adapted for public boundary"
+      "bytes": 5194,
+      "sha256": "f3be87ffe25c93f243b0e33a3a5efbbb8f67a32b564fb8d6081ddae956545337"
+    },
+    {
+      "path": "tests/test_dataset_integration.py",
+      "bytes": 8968,
+      "sha256": "0736fc27b797f60242cf61da3726c507fd613ed09ebb49132f2359f8afd28310"
+    },
+    {
+      "path": "tests/test_development_pilot.py",
+      "bytes": 10551,
+      "sha256": "a5b951e10db8962f7a563a06360e4e42b0ce7a4966b806474911db362978e5d1"
     },
     {
       "path": "tests/test_evaluation.py",
       "bytes": 4424,
-      "sha256": "13c074361ce3c9c4c83c76bc017113ae9710dd98068804a6bf5204e92ef1524d",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "13c074361ce3c9c4c83c76bc017113ae9710dd98068804a6bf5204e92ef1524d"
     },
     {
       "path": "tests/test_experiment_dashboard.py",
       "bytes": 16465,
-      "sha256": "45ee3fa9fa044b4b873fc55f002067581a0cbe96173d956c899d29161d285301",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "45ee3fa9fa044b4b873fc55f002067581a0cbe96173d956c899d29161d285301"
     },
     {
       "path": "tests/test_experiment_repeats.py",
       "bytes": 4882,
-      "sha256": "ea464eab27b47df1e64fe0597b6ca56647f7e77c788e430442695f233316acef",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "ea464eab27b47df1e64fe0597b6ca56647f7e77c788e430442695f233316acef"
     },
     {
       "path": "tests/test_five_method_benchmark.py",
       "bytes": 4624,
-      "sha256": "1b99adaddc8b8fe0b7a1bfdfacdbc0abeb6f82e226545ca3eeb1821898b281ee",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "1b99adaddc8b8fe0b7a1bfdfacdbc0abeb6f82e226545ca3eeb1821898b281ee"
+    },
+    {
+      "path": "tests/test_gemini_adc.py",
+      "bytes": 14720,
+      "sha256": "864dc6d884b7d27677743a583411e4997df78871f1c38975fcab49dff5a3f1df"
+    },
+    {
+      "path": "tests/test_gemini_validation.py",
+      "bytes": 4840,
+      "sha256": "571f3b308de8121adf9e7f93380fbad06dce07fec5c383799c5f5a02297b5ffe"
     },
     {
       "path": "tests/test_graph.py",
       "bytes": 1395,
-      "sha256": "430be83f6ff594ddba7b28c1027b8272c1f703da032b7afcb8ec5ab037d5a0c9",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "430be83f6ff594ddba7b28c1027b8272c1f703da032b7afcb8ec5ab037d5a0c9"
     },
     {
       "path": "tests/test_graph_capacity.py",
       "bytes": 596,
-      "sha256": "5817ed86ffc80965b4cf20a9c6c1d7cb620ef5f3942afc4199e65591d484af18",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "5817ed86ffc80965b4cf20a9c6c1d7cb620ef5f3942afc4199e65591d484af18"
     },
     {
       "path": "tests/test_graph_cli.py",
       "bytes": 5122,
-      "sha256": "8ebd419dba5ce242ad3d24ebfce3bf1b3ff8c838433722ed10a5f84432950a5c",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "8ebd419dba5ce242ad3d24ebfce3bf1b3ff8c838433722ed10a5f84432950a5c"
     },
     {
       "path": "tests/test_graph_expansion.py",
       "bytes": 5159,
-      "sha256": "9ff4b5e5ac728c92a15b700f6132e82712e2d6b492c0aaa7938cc95856401b8e",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "9ff4b5e5ac728c92a15b700f6132e82712e2d6b492c0aaa7938cc95856401b8e"
     },
     {
       "path": "tests/test_graph_integrity.py",
       "bytes": 8158,
-      "sha256": "522589a4ceff4c95861d6e2a95108af9159b4f622c1ebd194a3aa9ca7831dab1",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "522589a4ceff4c95861d6e2a95108af9159b4f622c1ebd194a3aa9ca7831dab1"
     },
     {
       "path": "tests/test_graph_persistence.py",
       "bytes": 4860,
-      "sha256": "b99b033de3e0eea1882a594869b02e6c9b55366c6aeaf76f1b424d4aadc7538d",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "b99b033de3e0eea1882a594869b02e6c9b55366c6aeaf76f1b424d4aadc7538d"
+    },
+    {
+      "path": "tests/test_graph_pilot.py",
+      "bytes": 9955,
+      "sha256": "ac072a14a3e4c3000ea7dc7bc9ad3d8b3ad0270036abbe3d9c460852532f3cb2"
     },
     {
       "path": "tests/test_graph_updates.py",
       "bytes": 7532,
-      "sha256": "72afbb7920b208e35a6c9470156de3b64ff384e2e81213aa20ad6b86e5a5850d",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "72afbb7920b208e35a6c9470156de3b64ff384e2e81213aa20ad6b86e5a5850d"
+    },
+    {
+      "path": "tests/test_groq_pacing.py",
+      "bytes": 2331,
+      "sha256": "a7f19c20445ee3d3d84cce2412d4cdbe8efa8bf693b7a3444c2c96f0270d92ff"
     },
     {
       "path": "tests/test_llm_provider.py",
       "bytes": 14205,
-      "sha256": "2ed75fc69a0acd6e095099fc3893996ecd681b1531ab17c717913a1aca21c927",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "2ed75fc69a0acd6e095099fc3893996ecd681b1531ab17c717913a1aca21c927"
+    },
+    {
+      "path": "tests/test_meta_clm.py",
+      "bytes": 18296,
+      "sha256": "de17e1550a52283978b3b2691adad02a009b4378c626ea5da290d5e77bbd89eb"
+    },
+    {
+      "path": "tests/test_meta_tool_contract.py",
+      "bytes": 15128,
+      "sha256": "99c00a48fdebaeaae11b1c98b9d6bbf8d3498563eef1853b2c29778266b350a4"
+    },
+    {
+      "path": "tests/test_meta_validation.py",
+      "bytes": 4420,
+      "sha256": "7cd58f90717b33d65c9bc1930a7b3ee8b54282c31a76db4771934cca8a5c2c38"
     },
     {
       "path": "tests/test_pilot_freeze.py",
       "bytes": 1958,
-      "sha256": "5c476ee8a74208a6414e234af3827a6d483f2607ffa697a16dfcc4555bfddbc1",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "5c476ee8a74208a6414e234af3827a6d483f2607ffa697a16dfcc4555bfddbc1"
     },
     {
       "path": "tests/test_planner_feedback.py",
       "bytes": 5990,
-      "sha256": "a3cb4e6a1b8850f9e8d5c4f92b6f48523159311b5113aca582c0b4171c0da25f",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "a3cb4e6a1b8850f9e8d5c4f92b6f48523159311b5113aca582c0b4171c0da25f"
+    },
+    {
+      "path": "tests/test_planner_tool_contract.py",
+      "bytes": 7211,
+      "sha256": "8323c5331eecc55516749fb9c6ef7a717c39508cf580f87700a5e7f42a26f824"
+    },
+    {
+      "path": "tests/test_pooled_review.py",
+      "bytes": 10759,
+      "sha256": "a641912562fdc732ad33a68a15bca58e6aa6e82d3602727dacfa4c230f279002"
     },
     {
       "path": "tests/test_prepilot_protocol.py",
       "bytes": 15727,
-      "sha256": "2f127a07499daf4963cf9d639621b4b052bd9fedd88ac76baf3a522b620407c2",
-      "role": "Offline automated correctness tests",
-      "selection": "adapted for public boundary"
+      "sha256": "2f127a07499daf4963cf9d639621b4b052bd9fedd88ac76baf3a522b620407c2"
     },
     {
       "path": "tests/test_public_release.py",
       "bytes": 2616,
-      "sha256": "7fc57f1ac5e1051d890e149d2fd40cdd49d614a7443cb0256a4fbb24e6269005",
-      "role": "Offline automated correctness tests",
-      "selection": "new public material"
+      "sha256": "7fc57f1ac5e1051d890e149d2fd40cdd49d614a7443cb0256a4fbb24e6269005"
+    },
+    {
+      "path": "tests/test_quality_collection.py",
+      "bytes": 5060,
+      "sha256": "cceb2c6d635dd85b51e25d85059db8d7e3ca5b7f7dda025b7595a620fcd58f72"
     },
     {
       "path": "tests/test_recovery.py",
       "bytes": 1198,
-      "sha256": "f3571a61bb768c666bdeb74f8e054820273aeb82c3eaa2004d63376ca382b745",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "f3571a61bb768c666bdeb74f8e054820273aeb82c3eaa2004d63376ca382b745"
     },
     {
       "path": "tests/test_repository_preparation.py",
       "bytes": 4368,
-      "sha256": "6ea361e934d83bb579ac9c15f51223781ea7018933d79e04850b010553e760a1",
-      "role": "Offline automated correctness tests",
-      "selection": "adapted for public boundary"
+      "sha256": "6ea361e934d83bb579ac9c15f51223781ea7018933d79e04850b010553e760a1"
     },
     {
       "path": "tests/test_research_assessment.py",
       "bytes": 5158,
-      "sha256": "ee4681d0bdf214d9b7411fcdde187275a78ce78085b6d5964d179cd34b0786f3",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "ee4681d0bdf214d9b7411fcdde187275a78ce78085b6d5964d179cd34b0786f3"
     },
     {
       "path": "tests/test_research_interface.py",
       "bytes": 13458,
-      "sha256": "66caf931b32a66e7c84311b50437c7c1a1c004854ea137d4e48dac28840353eb",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "66caf931b32a66e7c84311b50437c7c1a1c004854ea137d4e48dac28840353eb"
+    },
+    {
+      "path": "tests/test_responses_and_factorial.py",
+      "bytes": 5857,
+      "sha256": "60fc9d31683f6e6161ab2f1f00318f42675582ecfa50239698e427f511c23dcd"
     },
     {
       "path": "tests/test_retrieval.py",
       "bytes": 4821,
-      "sha256": "5665f306cdd9858478c0eaf906e944d107178b0d9bb6888bd75a534885985427",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "5665f306cdd9858478c0eaf906e944d107178b0d9bb6888bd75a534885985427"
     },
     {
       "path": "tests/test_retrieval_cli.py",
       "bytes": 4690,
-      "sha256": "1ac26579dec04c673dd986057b0eeb5542ae5a4fa1f20949dc2c32c787192ea6",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "1ac26579dec04c673dd986057b0eeb5542ae5a4fa1f20949dc2c32c787192ea6"
     },
     {
       "path": "tests/test_retrieval_reliability.py",
       "bytes": 11583,
-      "sha256": "de5dd1104531e350a25b0dd0ad536089e48bd9875dabf08c0345a7936aa19dc0",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "de5dd1104531e350a25b0dd0ad536089e48bd9875dabf08c0345a7936aa19dc0"
     },
     {
       "path": "tests/test_scale.py",
       "bytes": 1121,
-      "sha256": "abd4f27bf7e537a53cea8c8ce2daf3b198ffe7c35b8901dc1dfe512b322e8edc",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "abd4f27bf7e537a53cea8c8ce2daf3b198ffe7c35b8901dc1dfe512b322e8edc"
     },
     {
       "path": "tests/test_selection_milestone4.py",
       "bytes": 5277,
-      "sha256": "cf47edcc5119322fbb3b34a073671d133b29ba5c1eb5ab6416dd5b267bc73467",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "cf47edcc5119322fbb3b34a073671d133b29ba5c1eb5ab6416dd5b267bc73467"
     },
     {
       "path": "tests/test_validity_corrections.py",
       "bytes": 16205,
-      "sha256": "00418eda318e965b11383a9bbdd51cf44a2f040097d25241efc13f18c5533ba3",
-      "role": "Offline automated correctness tests",
-      "selection": "adapted for public boundary"
+      "sha256": "00418eda318e965b11383a9bbdd51cf44a2f040097d25241efc13f18c5533ba3"
     },
     {
       "path": "tests/test_web_ui.py",
       "bytes": 9699,
-      "sha256": "2f98193436c8db955550f20af87a7db19dcdf80bc795f34d19d74819f77a720e",
-      "role": "Offline automated correctness tests",
-      "selection": "copied unchanged"
+      "sha256": "2f98193436c8db955550f20af87a7db19dcdf80bc795f34d19d74819f77a720e"
     }
   ],
   "excluded_categories": [
@@ -782,5 +914,6 @@
     "Historical provider pilots and wrappers",
     "Internal milestone, audit and planning documentation",
     "Installed environments and caches"
-  ]
+  ],
+  "legacy_context_policy_version": "controlled-context-v2-capacity-stop"
 }

@@ -36,8 +36,8 @@ def assessment_claims(result, manifest, query_id):
 def _experiment(directory):
     root = Path(directory)
     manifest = json.loads((root / "experiment.json").read_text(encoding="utf-8"))
-    if manifest.get("suite") != "controlled-five":
-        raise ValueError("Research assessment requires a controlled-five experiment; legacy outputs are preserved")
+    if manifest.get("suite") not in ("controlled-five", "controlled-seven"):
+        raise ValueError("Research assessment requires a controlled experiment; legacy outputs are preserved")
     rows = pd.read_csv(root / "metrics.csv", dtype={"query_id": str}).to_dict("records")
     validate_schedule(manifest, rows)
     return root, manifest, rows
@@ -178,7 +178,11 @@ def score_research(directory, *, labels_path=None, subtopics_path=None, claim_ju
     if claim_labels is not None and set(claim_labels)-used_claims:
         raise ValueError("Claim judgment file contains records outside this experiment")
     pd.DataFrame(records).to_csv(root / "research-metrics.csv", index=False)
-    contrasts = {metric: paired_comparisons(records, metric) for metric in
+    comparison = paired_comparisons
+    if manifest.get("suite") == "controlled-seven":
+        from .factorial import paired_comparisons_2x3
+        comparison = paired_comparisons_2x3
+    contrasts = {metric: comparison(records, metric) for metric in
                  ("precision_at_10", "ndcg_at_10", "recall_at_10", "supported_claim_rate", "claim_factual_accuracy", "unique_relevant_papers",
                   "task_overall_answer_accuracy","task_overall_task_completion","task_answer_coverage")}
     atomic_json(root / "research-paired-comparisons.json", contrasts)

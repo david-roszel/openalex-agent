@@ -250,7 +250,7 @@ def approval_digest(config):
 
 
 def reserved_question(question,root):
-    path=Path(root)/"data/study/reserved-questions.json"
+    path=Path(root)/"benchmarks/research_heldout.proposed.json"
     try:
         rows=json.loads(path.read_text())
         return " ".join(question.casefold().split()) in {" ".join(q["question"].casefold().split()) for q in rows}

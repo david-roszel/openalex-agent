@@ -2,7 +2,7 @@
 
 Research software for comparing graph memory and model-controlled working
 context in academic literature retrieval. It includes an OpenAlex client,
-incremental knowledge graph, bounded LLM planning, a controlled five-method
+incremental knowledge graph, bounded LLM planning, a controlled seven-method
 benchmark, evidence assessment and a local Streamlit dashboard.
 
 **Research status:** the implementation and correctness diagnostics are available.
@@ -19,11 +19,15 @@ held-out evaluation or independent human annotations are distributed.
 | `llm_graph` | Yes | Environment-managed bounded context | Hosted LLM |
 | `clm` | No | Model-editable bounded working text | Hosted LLM |
 | `clm_graph` | Yes | Model-editable bounded working text | Hosted LLM |
+| `meta_clm` | No | Official Meta conversation editing | Hosted LLM |
+| `meta_clm_graph` | Yes | Official Meta conversation editing | Hosted LLM |
 
-The four agent cells form a 2×2 graph/context design. They share retrieval tools,
+The six agent cells form a graph(2) × context(3) design; `standard` is a separate baseline.
+The original four agent cells remain available as a 2×2 design. They share retrieval tools,
 corpus access, validation rules and final lexical ranking. Graph planning inputs
 and context-management behavior intentionally differ. All methods start with
-isolated state. Select `--suite controlled-five`; the older CLI `legacy` suite is
+isolated state. Select `--suite controlled-seven` for all seven methods or
+`--suite controlled-five` for the original five; the older CLI `legacy` suite is
 a separate compatibility interface, not this factorial design.
 
 OpenAlex metadata enters the retrieval/cache layer, then observed records enter
@@ -31,6 +35,17 @@ agent memory and optionally the graph. The planner chooses validated actions;
 the controller applies budgets and commits observations. CLM-inspired agents
 can edit working text and recover archived observations. Metadata, graph records
 and raw evidence remain authoritative outside that editable text.
+
+Meta uses its pinned official renderer, parser, edit gate and synchronizer through
+a restricted conversation-file interface. The vendored components retain **CC BY-NC
+4.0** and their NOTICE; no project-wide license is inferred. Terra Responses and
+the optional Gemini ADC adapter are supported. See [seven-method integration](docs/SEVEN_ARCHITECTURES.md).
+
+The November 8 legacy CLM correction preserves character/token limits, accepts
+validated STOP with pending archived evidence, and prevents capacity/admission
+failures from causing retrieval fallback. Its policy identity is
+`controlled-context-v2-capacity-stop`; historical experiments retain their original
+meaning. See [capacity and termination](docs/CLM_CAPACITY_TERMINATION_CORRECTION.md).
 
 ## Install and test
 
@@ -138,7 +153,7 @@ handling, and `python main.py --help` for the complete CLI.
 
 ## Scientific limitations
 
-This is a CLM-inspired context-as-a-file adaptation, not a trained memory model
+The `clm`/`clm_graph` methods are CLM-inspired context-as-a-file adaptations, not a trained memory model
 or a reproduction of a published training/evaluation harness. It provides bounded
 JSON text edits and observation recovery, not arbitrary shell access, hidden
 reasoning, native provider-context control or compute-cache reuse.
@@ -159,15 +174,14 @@ judgments or empirical results have been invented for this release.
 Technical design: [algorithms](docs/ALGORITHMS.md), [graph](docs/GRAPH_DESIGN.md),
 [CLM adaptation](docs/CLM_IMPLEMENTATION.md), [evaluation](docs/EVALUATION.md).
 The included tests cover core retrieval, graph correctness, planning, controlled
-comparisons, evidence accounting and Streamlit rendering. Historical provider
-pilot wrappers and their dedicated tests are outside the release scope.
+comparisons, evidence accounting and Streamlit rendering. Provider validation utilities are included, but historical experiments, their
+private inputs, approval receipts and outputs are not distributed.
 
 Internal milestones, drafts, audits, unpublished evaluation questions, private
 annotations, local data, API keys and Git history are excluded. Generated outputs
 belong under ignored `data/`. Run `python scripts/repository_audit.py` before
-staging; `--staged` checks exact index blobs after you initialize Git. See
-[PUBLISHING.md](PUBLISHING.md) for commands; no initialization or publication has
-been performed automatically.
+staging; `--staged` checks exact index blobs. See
+[PUBLISHING.md](PUBLISHING.md) for commands; this update performs no commit or publication automatically.
 
 `PUBLIC_MANIFEST.json` identifies included files and hashes. The complete private
 selection/exclusion review is stored separately, outside this export. The

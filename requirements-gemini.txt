@@ -1,0 +1,2 @@
+# Optional isolated SDK environment; keep the main research environment unchanged.
+google-genai==3.0.0

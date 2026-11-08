@@ -1,0 +1,222 @@
+{
+  "provenance": "Synthetic public context text with regression argument-key shapes. No historical provider output, research question, or trace is distributed.",
+  "failures": [
+    {
+      "architecture": "meta_clm",
+      "call": 1,
+      "arguments": {
+        "op": "replace",
+        "new": "SYNTHETIC PUBLIC CONTEXT TEXT",
+        "old": "",
+        "path": "LIVE_CTX_MAIN.txt"
+      },
+      "original_parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "enum": [
+              "LIVE_CTX_MAIN.txt"
+            ]
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "read",
+              "replace",
+              "append",
+              "splice"
+            ]
+          },
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "chars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          },
+          "text": {
+            "type": "string"
+          },
+          "old": {
+            "type": "string"
+          },
+          "new": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "op"
+        ],
+        "additionalProperties": false
+      },
+      "source_trace": "data/optional-local-schema-comparison/request.json"
+    },
+    {
+      "architecture": "meta_clm",
+      "call": 3,
+      "arguments": {
+        "op": "replace",
+        "new": "SYNTHETIC PUBLIC CONTEXT TEXT",
+        "text": "SYNTHETIC PUBLIC CONTEXT TEXT",
+        "path": "LIVE_CTX_MAIN.txt",
+        "old": ""
+      },
+      "original_parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "enum": [
+              "LIVE_CTX_MAIN.txt"
+            ]
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "read",
+              "replace",
+              "append",
+              "splice"
+            ]
+          },
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "chars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          },
+          "text": {
+            "type": "string"
+          },
+          "old": {
+            "type": "string"
+          },
+          "new": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "op"
+        ],
+        "additionalProperties": false
+      },
+      "source_trace": "data/optional-local-schema-comparison/request.json"
+    },
+    {
+      "architecture": "meta_clm_graph",
+      "call": 1,
+      "arguments": {
+        "path": "LIVE_CTX_MAIN.txt",
+        "old": "SYNTHETIC PUBLIC CONTEXT TEXT",
+        "new": "SYNTHETIC PUBLIC CONTEXT TEXT",
+        "op": "replace"
+      },
+      "original_parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "enum": [
+              "LIVE_CTX_MAIN.txt"
+            ]
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "read",
+              "replace",
+              "append",
+              "splice"
+            ]
+          },
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "chars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          },
+          "text": {
+            "type": "string"
+          },
+          "old": {
+            "type": "string"
+          },
+          "new": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "op"
+        ],
+        "additionalProperties": false
+      },
+      "source_trace": "data/optional-local-schema-comparison/request.json"
+    },
+    {
+      "architecture": "meta_clm_graph",
+      "call": 2,
+      "arguments": {
+        "new": "SYNTHETIC PUBLIC CONTEXT TEXT",
+        "old": "",
+        "path": "LIVE_CTX_MAIN.txt",
+        "op": "replace"
+      },
+      "original_parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "enum": [
+              "LIVE_CTX_MAIN.txt"
+            ]
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "read",
+              "replace",
+              "append",
+              "splice"
+            ]
+          },
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "chars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          },
+          "text": {
+            "type": "string"
+          },
+          "old": {
+            "type": "string"
+          },
+          "new": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "op"
+        ],
+        "additionalProperties": false
+      },
+      "source_trace": "data/optional-local-schema-comparison/request.json"
+    }
+  ]
+}

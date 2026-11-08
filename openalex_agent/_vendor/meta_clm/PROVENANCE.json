@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/facebookresearch/context-language-models",
+  "revision": "483198229ab7b90c0eed4651306ab3b3505aaf50",
+  "license": "CC-BY-NC-4.0",
+  "scope": "Unmodified zero-shot conversation synchronization and budget leaves; no training or Harbor harness",
+  "files": {
+    "context_env/env.py": "414f8f05b93d141374307d797e7cd3ad1c4315810450706e552c312ac9dd6e48",
+    "context_env/edit_gate.py": "1cfdb5c83f19dba7ddeede90618d155963faa554dc65e47997d19d2a19581f6c",
+    "context_env/paths.py": "9b5a0858269aea18372b1aafae455987b609a2754b12cf75d890f5111bcbd698",
+    "context_env/types.py": "0b23407a48df843b542457a2996f773bbbd93add7feca7a8ffeb59ee46d5e63b",
+    "context_utils/context_string.py": "9a6e96b540fe2ecb339f17397e487d38bdc6ca24962e1f9ef7de8b4c4959e76c",
+    "utils/budget.py": "7c63b52676209f55bf327c401c6a1762bb0861408fe96cb5da1534554508dee3",
+    "utils/tokens.py": "d2c8cfaf0fb0f1ae430e72e774546e469b9cd5f06a4eba119a01d7a0ea972e72",
+    "utils/finish_policy.py": "855ab99579e5ab9d7f7204f751c4918e372893d7c8b64a4abc728a83e4d69c2f",
+    "LICENSE": "41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0",
+    "NOTICE": "ce77ffcc6f7ba8fb321c1f650adb3fd2c6d4e89247487c9585d200a051453f06"
+  },
+  "adaptations": "Custom restricted environment and provider adapters live outside this vendor directory; package marker files added."
+}

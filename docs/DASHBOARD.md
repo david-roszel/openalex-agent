@@ -37,3 +37,7 @@ Scientific input files are kept under approved local experiment locations.
 No actual human review bundle, approval or empirical corpus is distributed.
 This localhost, single-process tool has no multiuser authentication, distributed
 queue or account-wide cost coordination.
+
+The existing dashboard controls remain five-method controls. Seven-method runs
+use the benchmark CLI or separately pinned provider runner; their implementation
+is described in [seven-method integration](SEVEN_ARCHITECTURES.md).

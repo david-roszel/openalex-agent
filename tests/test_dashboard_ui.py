@@ -89,8 +89,8 @@ def test_saved_multiple_experiments_open_without_new_execution(ui,tmp_path,monke
 
 
 def test_reserved_question_cannot_bypass_approval_through_individual_page(ui,tmp_path,monkeypatch):
-    directory=tmp_path/"data/study";directory.mkdir(parents=True)
-    (directory/"reserved-questions.json").write_text(json.dumps([dict(question="Reserved final question")]))
+    directory=tmp_path/"benchmarks";directory.mkdir(parents=True)
+    (directory/"research_heldout.proposed.json").write_text(json.dumps([dict(question="Reserved final question")]))
     monkeypatch.setattr(web_ui,"start_research",lambda *a,**kw:pytest.fail("Reserved questions cannot launch here"))
     widget(ui,"text_area","Research question").set_value("Reserved final question")
     widget(ui,"checkbox","Confirm paid hosted retrieval").check().run()

@@ -7,6 +7,7 @@ import time
 from pathlib import Path
 from typing import Callable
 import pandas as pd
+from .actions import RELIABILITY_VERSION
 from .controller import Budget, Controller, METHODS
 from .corpus import LocalCorpus, atomic_json
 from .evaluation import load_judgments, metrics
@@ -33,7 +34,8 @@ def _capture_requests(planner, path: Path):
     def capture(request):
         body = json.loads(request.content)
         safe = planner._redact({key: body[key] for key in ("model", "messages", "response_format",
-            "max_tokens", "max_completion_tokens", "temperature", "reasoning_effort") if key in body})
+            "max_tokens", "max_completion_tokens", "temperature", "reasoning_effort", "input", "tools",
+            "max_output_tokens", "reasoning", "store", "text", "tool_choice", "parallel_tool_calls", "include") if key in body})
         with path.open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(safe, ensure_ascii=False) + "\n")
     planner.http.event_hooks["request"].append(capture)
@@ -68,12 +70,12 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                     allow_deterministic: bool = False, ablations: bool = False, suite: str = "legacy",
                     inference_limits=None, require_evidence: bool = False, factual_questions_path: str | None = None,
                     trial_seeds: tuple[int, ...] | None = None, cancel_check=None) -> list[dict]:
-    from .controlled import ARCHITECTURES, ControlledController
+    from .controlled import ARCHITECTURES, ALL_ARCHITECTURES, META_ARCHITECTURES, ControlledController, context_strategy
     from .context_planner import ContextPlanner, EngineeringContextModel, InferenceLimits
     from .research_metrics import efficiency_metrics, retrieval_diagnostics
-    if suite not in ("legacy", "controlled-five"):
-        raise ValueError("Choose legacy or controlled-five experiment suite")
-    available = METHODS if suite == "legacy" else ARCHITECTURES
+    if suite not in ("legacy", "controlled-five", "controlled-seven"):
+        raise ValueError("Choose legacy, controlled-five or controlled-seven experiment suite")
+    available = METHODS if suite == "legacy" else ALL_ARCHITECTURES if suite == "controlled-seven" else ARCHITECTURES
     methods = available if methods is None else methods
     inference_limits = inference_limits or InferenceLimits()
     if type(trials) is not int or trials < 1 or not action_budgets or any(type(b) is not int or b < 1 for b in action_budgets):
@@ -82,6 +84,8 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
         raise ValueError("Provide one nonnegative trial seed per repeated trial")
     if not methods or len(set(methods)) != len(methods) or any(m not in available for m in methods):
         raise ValueError("Unknown retrieval method")
+    if require_evidence and set(methods).intersection(META_ARCHITECTURES):
+        raise ValueError("Meta uses native functions; use the common terminal factual protocol instead of legacy per-decision evidence envelopes")
     if len(set(action_budgets)) != len(action_budgets):
         raise ValueError("Action budgets must be unique")
     directory = Path(output)
@@ -107,7 +111,7 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
     base_budget = budget or Budget(max_rounds=max(action_budgets))
     factual_questions=[]
     if factual_questions_path:
-        if suite!="controlled-five" or base_budget.max_llm_calls<2:
+        if suite not in ("controlled-five", "controlled-seven") or base_budget.max_llm_calls<2:
             raise ValueError("Fixed factual questions require controlled-five and at least two total model calls")
         factual_questions=json.loads(Path(factual_questions_path).read_text(encoding="utf-8"))
         if (not isinstance(factual_questions,list) or any(not isinstance(f,dict) or set(f)!={"query_id","question_id","question"}
@@ -120,6 +124,9 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
     planner_name, model = probe.name, probe.model
     provider_fingerprint = probe.fingerprint
     provider_configuration = getattr(probe, "configuration", {})
+    if suite == "controlled-seven" and planner_name != "deterministic" and not hasattr(probe, "_call_native"):
+        if hasattr(probe, "close"): probe.close()
+        raise ValueError("controlled-seven requires explicit Responses transport for all six agent configurations")
     if hasattr(probe, "close"):
         probe.close()
     if planner_name == "deterministic" and any(m != "standard" for m in methods) and not allow_deterministic:
@@ -144,9 +151,10 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
         "questions_sha256": hashlib.sha256(Path(questions_path).read_bytes()).hexdigest(),
         "judgments": json.loads(Path(labels_path).read_text()) if labels_path else None,
         "action_budgets": action_budgets, "trials": trials, "methods": methods, "base_budget": base_budget.__dict__,
-        "planner": planner_name, "model": model, "deterministic_smoke": planner_name == "deterministic",
-        "suite": suite, "inference_limits": asdict(inference_limits) if suite == "controlled-five" else None,
-        "require_evidence": require_evidence if suite == "controlled-five" else False,
+        "planner": planner_name, "model": model, "deterministic_smoke": planner_name == "deterministic" or provider_configuration.get('mocked_generation',False),
+        "suite": suite, "inference_limits": asdict(inference_limits) if suite in ("controlled-five", "controlled-seven") else None,
+        "experimental_implementation_version": ("meta-conversation-reference-v1" if suite == "controlled-seven" else RELIABILITY_VERSION if suite == "controlled-five" else None),
+        "require_evidence": require_evidence if suite in ("controlled-five", "controlled-seven") else False,
         "factual_questions":factual_questions,
         "trial_seeds":trial_seeds,
         "seed_role":"trial identifier; no hosted sampling seed is transmitted",
@@ -159,7 +167,26 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                           for p in sorted(Path(__file__).parent.glob("*.py"))},
         "run_order": schedule, "planned_runs": len(schedule), "status": "running",
         "has_relevance_judgments": bool(labels_path)}
+    if suite in ("controlled-five", "controlled-seven"):
+        from .context_planner import CONTEXT_POLICY_VERSION
+        manifest["legacy_context_policy_version"] = CONTEXT_POLICY_VERSION
     atomic_json(directory / "experiment.json", manifest)
+    if suite == "controlled-seven":
+        from .meta_context import META_VERSION, VENDOR, reference_provenance
+        from shutil import copytree
+        manifest.update(experimental_implementation_version=META_VERSION,meta_reference=reference_provenance(),
+            context_strategies={method:context_strategy(method) for method in methods},
+            analysis_version="factorial-2x3-descriptive-v1",
+            transport_comparison="Responses for all six agents; native Meta functions versus existing JSON decision envelopes is a declared adapter difference",
+            meta_adaptations=dict(version=META_VERSION,sandbox="single-file capability; no Bash",
+                archived_observation_recovery=False,overflow="official gate plus unchanged common hard limits"))
+        if provider_configuration.get('protocol','').startswith('gemini-'):
+            manifest.update(provider_experiment_version=provider_configuration['protocol'],
+                transport_comparison='Gemini Enterprise generate_content for all six agents; existing JSON envelopes versus native Meta functions; ADC only')
+        else:
+            manifest['provider_experiment_version']='terra-responses-seven-v1'
+        atomic_json(directory / "experiment.json",manifest)
+        copytree(VENDOR,directory / "reference-source",ignore=__import__('shutil').ignore_patterns('__pycache__'))
     (directory / "source").mkdir()
     for path in sorted(Path(__file__).parent.glob("*.py")):
         (directory / "source" / path.name).write_bytes(path.read_bytes())
@@ -180,11 +207,15 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                     try:
                         if method != "standard" and (planner.name, planner.model, planner.fingerprint) != (planner_name, model, provider_fingerprint):
                             raise ValueError("Experiment provider configuration changed; use the frozen settings")
-                        if suite == "controlled-five" and method != "standard":
-                            if planner.name == "deterministic":
-                                planner = EngineeringContextModel()
-                            planner = ContextPlanner(planner, mode="clm" if method.startswith("clm") else "conventional", limits=inference_limits,
-                                                     require_evidence=require_evidence)
+                        if suite in ("controlled-five", "controlled-seven") and method != "standard":
+                            if method in META_ARCHITECTURES:
+                                from .meta_planner import MetaContextPlanner, MetaEngineeringModel
+                                if planner.name == "deterministic": planner = MetaEngineeringModel()
+                                planner = MetaContextPlanner(planner, limits=inference_limits, require_evidence=require_evidence)
+                            else:
+                                if planner.name == "deterministic": planner = EngineeringContextModel()
+                                planner = ContextPlanner(planner, mode=context_strategy(method), limits=inference_limits,
+                                                         require_evidence=require_evidence)
                             controller = ControlledController(q["question"], corpus, db, architecture=method, planner=planner,
                                 budget=retrieval_budget, scoring=scoring, output=str(directory / "runs"))
                         else:
@@ -211,7 +242,7 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                         if hasattr(planner, "close"):
                             planner.close()
                     execution_wall_seconds = time.perf_counter()-wall_started
-                    if suite == "controlled-five":
+                    if suite in ("controlled-five", "controlled-seven"):
                         result["end_to_end_seconds"] = execution_wall_seconds
                         atomic_json(Path(result["directory"]) / "result.json", result)
                     row = {"query_id": q["id"], "method": method, "variant": variant, "trial": trial,
@@ -230,16 +261,17 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                         "wait_seconds": result["wait_seconds"],
                         "stop_reason": result["stop_reason"], "corpus": result["corpus"],
                         "planner": result["planner"], "model": result["model"],
-                        "deterministic_smoke": planner_name == "deterministic", "has_judgments": bool(labels_path)}
+                        "deterministic_smoke": planner_name == "deterministic" or provider_configuration.get('mocked_generation',False), "has_judgments": bool(labels_path)}
                     events = db.events(result["run_id"])
                     row["llm_failures"] = result["llm_usage"]["failures"]
                     row["fallbacks"] = sum(e["kind"] == "invalid_decision" for e in events)
                     row["valid_llm_run"] = (method == "standard" or
                         planner_name != "deterministic" and row["llm_calls"] > 0) and not row["llm_failures"] and not row["fallbacks"] and result["stop_reason"] != "retrieval_error"
+                    if provider_configuration.get('mocked_generation'):row['valid_llm_run']=False
                     if factual_questions and method!="standard" and result["factual_responses"][0]["status"]!="valid":
                         row["valid_llm_run"]=False
-                    if suite == "controlled-five":
-                        row.update(graph_enabled=method.endswith("_graph"), context_management="none" if method == "standard" else "clm" if method.startswith("clm") else "conventional",
+                    if suite in ("controlled-five", "controlled-seven"):
+                        row.update(graph_enabled=method.endswith("_graph"), context_management=context_strategy(method),
                             context_edits=result.get("context_edits", 0), rejected_context_edits=result.get("rejected_context_edits", 0),
                             context_snapshots=result.get("context_snapshots", 0), active_context_chars=result.get("active_context_chars", 0),
                             evidence_record_count=len(result.get("evidence_records", [])),
@@ -255,10 +287,14 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                         row.update(context_management_seconds=sum(e.get("seconds", 0) for e in overhead),
                             context_management_input_tokens=sum(e.get("usage_delta", {}).get("input_tokens", 0) for e in overhead),
                             context_management_output_tokens=sum(e.get("usage_delta", {}).get("output_tokens", 0) for e in overhead))
+                    if suite == "controlled-seven":
+                        row.update({key: result.get(key) for key in ("meta_reference_revision", "meta_synchronization_seconds",
+                            "meta_reference_syncs", "meta_reference_meaningful_syncs", "meta_recovery_calls", "meta_sandbox",
+                            "meta_common_limit_rollbacks", "meta_reference_rollbacks")})
                     if labels_path:
                         row.update(metrics([p["paper"]["id"] for p in result["ranked"]], judgments[q["id"]],
                             k=run_budget.output_k, scope=scope, inspected=result["inspected_ids"], actions=result["actions"]))
-                        if suite == "controlled-five":
+                        if suite in ("controlled-five", "controlled-seven"):
                             at10 = metrics([p["paper"]["id"] for p in result["ranked"]], judgments[q["id"]], k=10, scope=scope)
                             row.update(precision_at_10=at10["precision_at_k"], ndcg_at_10=at10["ndcg_at_k"], recall_at_10=at10["recall_at_k"])
                             row.update(retrieval_diagnostics(result["inspected_ids"], judgments[q["id"]], result["actions"]))
@@ -322,7 +358,7 @@ def score_experiment(experiment_directory: str, labels_path: str) -> int:
         row.update(metrics([p["paper"]["id"] for p in result["ranked"]], labels,
             k=result["budget"]["output_k"], scope=scope, inspected=result["inspected_ids"], actions=result["actions"]))
         row["has_judgments"] = True
-        if experiment.get("suite") == "controlled-five":
+        if experiment.get("suite") in ("controlled-five", "controlled-seven"):
             from .research_metrics import retrieval_diagnostics
             at10 = metrics([p["paper"]["id"] for p in result["ranked"]], labels, k=10, scope=scope)
             row.update(precision_at_10=at10["precision_at_k"], ndcg_at_10=at10["ndcg_at_k"], recall_at_10=at10["recall_at_k"])
@@ -356,12 +392,12 @@ def report(experiment_directory: str, *, final: bool = False) -> list[str]:
         raise ValueError("Performance figures require recorded relevance judgments")
     from .experiment_integrity import validate_schedule
     validate_schedule(experiment, frame.to_dict("records"))
-    from .controlled import ARCHITECTURES
-    expected_methods = ARCHITECTURES if experiment.get("suite") == "controlled-five" else METHODS
+    from .controlled import ARCHITECTURES, ALL_ARCHITECTURES
+    expected_methods = ALL_ARCHITECTURES if experiment.get("suite") == "controlled-seven" else ARCHITECTURES if experiment.get("suite") == "controlled-five" else METHODS
     if final and (experiment.get("deterministic_smoke") or experiment.get("trials", 1) < 3 or
                   not 10 <= len(experiment["questions"]) <= 20 or set(experiment["methods"]) != set(expected_methods)):
         raise ValueError("Final comparisons require 10–20 independently judged questions, every method in the selected suite, and at least three hosted trials")
-    if final and experiment.get("suite") == "controlled-five" and any(q.get("split") != "heldout" for q in experiment["questions"]):
+    if final and experiment.get("suite") in ("controlled-five", "controlled-seven") and any(q.get("split") != "heldout" for q in experiment["questions"]):
         raise ValueError("Final controlled comparisons require explicitly held-out evaluation questions, separate from development")
     # Separate within-question trial variability from variation across questions.
     repeatability = frame.groupby(["query_id", "method", "variant", "action_budget"])[
@@ -376,8 +412,10 @@ def report(experiment_directory: str, *, final: bool = False) -> list[str]:
         ["precision_lower_bound", "judged_precision", "recall_at_k", "ndcg_at_k", "seconds", "inspected", "actions"]].agg(["mean", "std", "count"])
     summary.to_csv(directory / "summary.csv")
     paths = [str(directory / "summary.csv"), str(directory / "repeatability.csv"), str(directory / "failures.csv")]
-    if experiment.get("suite") == "controlled-five":
+    if experiment.get("suite") in ("controlled-five", "controlled-seven"):
         from .research_metrics import paired_comparisons
+        if experiment.get("suite") == "controlled-seven":
+            from .factorial import paired_comparisons_2x3 as paired_comparisons
         contrasts = paired_comparisons(frame.to_dict("records"), "recall_at_k")
         atomic_json(directory / "paired-comparisons.json", contrasts)
         paths.append(str(directory / "paired-comparisons.json"))

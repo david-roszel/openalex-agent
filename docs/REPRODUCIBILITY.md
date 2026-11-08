@@ -39,3 +39,9 @@ Verify the released source bytes with `python scripts/verify_manifest.py`. The
 manifest excludes its own hash. Runtime outputs and later intentional edits are
 outside that immutable export inventory; regenerate a new release manifest after
 approved source changes. Integrity verification does not establish research validity.
+
+Legacy CLM corrections carry `controlled-context-v2-capacity-stop`. New pinned
+experiments must record this identity and updated source hashes. Do not combine
+pre-correction fallbacks with corrected behavior as one treatment. Historical
+request replays and frozen experiment artifacts remain private; public schema
+fixtures contain synthetic context text and argument shapes only.

@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = ["httpx>=0.27,<1", "networkx>=3.3,<4", "numpy>=2,<3", "pandas>=2.2,<4", "scikit-learn>=1.5,<2", "matplotlib>=3.9,<4", "python-dotenv>=1,<2", "tiktoken==0.14.0"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<10"]
+dev = ["pytest>=8,<10", "jsonschema>=4.26,<5"]
 ui = ["streamlit>=1.53,<2"]
 
 [project.scripts]
@@ -20,7 +20,7 @@ openalex-agent = "openalex_agent.cli:main"
 include = ["openalex_agent*"]
 
 [tool.setuptools.package-data]
-openalex_agent = ["tokenizer_data/*"]
+openalex_agent = ["tokenizer_data/*", "_vendor/meta_clm/LICENSE", "_vendor/meta_clm/NOTICE", "_vendor/meta_clm/PROVENANCE.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

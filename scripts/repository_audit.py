@@ -16,7 +16,7 @@ import subprocess
 
 DIRECTORIES = ("openalex_agent", "tests", "benchmarks", "docs", "scripts", ".github")
 ROOT_FILES = (".gitignore", ".env.example", "README.md", "pyproject.toml",
-              "requirements.txt", "requirements.lock.txt", "requirements-ui.lock.txt",
+              "requirements.txt", "requirements.lock.txt", "requirements-ui.lock.txt", "requirements-gemini.txt",
               "main.py", "app.py", "launch-dashboard.sh", "PUBLISHING.md", "PUBLIC_MANIFEST.json", "LICENSE", "CITATION.cff",
               ".streamlit/config.toml")
 LOCAL_DIRECTORIES = {"data", ".venv", "venv", ".git", ".aws", ".codex", ".agents",

@@ -36,6 +36,9 @@ def run_budget(args):
 
 def planner_for(args, settings):
     from .llm import DeterministicPlanner, HostedJSONPlanner
+    if args.planner == "hosted" and getattr(args, "suite", None) == "controlled-seven":
+        from .responses import HostedResponsesPlanner
+        return HostedResponsesPlanner(settings)
     return HostedJSONPlanner(settings) if args.planner == "hosted" else DeterministicPlanner()
 
 
@@ -259,14 +262,14 @@ def main() -> None:
     check.add_argument("directory")
     benchmark = commands.add_parser("benchmark", help="Legacy four-method or controlled five-method fixed-corpus experiments")
     benchmark.add_argument("--corpus", required=True)
-    benchmark.add_argument("--questions", default="benchmarks/example_questions.json")
+    benchmark.add_argument("--questions", default="benchmarks/questions.json")
     benchmark.add_argument("--labels")
     benchmark.add_argument("--output", required=True)
     benchmark.add_argument("--action-budgets", type=int, nargs="+", default=[5, 10, 20])
     benchmark.add_argument("--trials", type=int, default=3)
     benchmark.add_argument("--allow-deterministic", action="store_true")
     benchmark.add_argument("--ablations", action="store_true")
-    benchmark.add_argument("--suite", choices=["legacy", "controlled-five"], default="legacy")
+    benchmark.add_argument("--suite", choices=["legacy", "controlled-five", "controlled-seven"], default="legacy")
     benchmark.add_argument("--max-total-tokens", type=int, default=100000, help="Controlled suite: observed-token stopping ceiling with estimated preflight")
     benchmark.add_argument("--active-context-tokens", type=int, help="Controlled suite: pinned study-token ceiling including transient recovery")
     benchmark.add_argument("--input-tokens", type=int, help="Controlled suite: pinned study-token ceiling for the complete explicit message envelope")

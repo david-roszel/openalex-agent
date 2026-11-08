@@ -7,7 +7,7 @@ CELL_KEYS = ("query_id", "action_budget", "trial", "method", "variant")
 
 
 def validate_schedule(manifest, rows):
-    controlled = manifest.get("suite") == "controlled-five"
+    controlled = manifest.get("suite") in ("controlled-five", "controlled-seven")
     if controlled and not {"status", "planned_runs", "run_order"} <= manifest.keys():
         raise ValueError("Controlled assessment requires a complete experiment schedule")
     if "planned_runs" in manifest and (manifest.get("status") != "complete" or len(rows) != manifest["planned_runs"]):
