@@ -17,7 +17,7 @@ from openalex_agent.corpus import freeze
 from openalex_agent.models import Paper
 from openalex_agent.research import ResearchConfig, start_research
 
-APP = str(Path(__file__).resolve().parents[1] / "app.py")
+APP = str(Path(__file__).resolve().parents[1] / "legacy_app.py")
 
 
 def settings():
@@ -60,11 +60,12 @@ def test_widgets_pass_configuration_to_existing_controller_and_show_results(app,
     widget(app, "selectbox", "Retrieval source").set_value("Cached corpus / snapshot").run()
     widget(app, "text_area", "Research question").set_value("adaptive retrieval")
     widget(app, "number_input", "Maximum actions").set_value(3)
-    widget(app, "number_input", "Maximum inspected papers").set_value(6)
+    widget(app, "number_input", "Maximum admitted metadata records").set_value(6)
     widget(app, "number_input", "Maximum HTTP attempts").set_value(2)
     widget(app, "number_input", "Maximum LLM calls").set_value(1)
     widget(app, "number_input", "Papers per action").set_value(1)
     widget(app, "checkbox", "Enable graph memory").uncheck()
+    widget(app, "checkbox", "Produce a final evidence-grounded answer").uncheck()
     widget(app, "button", "Start retrieval").click().run()
     job = app.session_state["research_job"]
     job.join(10)
@@ -79,7 +80,7 @@ def test_widgets_pass_configuration_to_existing_controller_and_show_results(app,
     assert any("Live OpenAlex retrieval is unavailable" in e.value or "live OpenAlex retrieval is unavailable" in e.value
                for e in list(app.info) + list(app.markdown))
     assert widget(app, "metric", "HTTP attempts").value == "0"
-    assert widget(app, "metric", "Papers inspected").value == "1"
+    assert widget(app, "metric", "Metadata records admitted").value == "1"
     assert any("SYNTHETIC TEST: adaptive retrieval" in e.value for e in app.text)
     assert any("TEST recorded stop" in e.value for e in app.json)
     assert "PRIVATE-" not in str(app)
@@ -137,7 +138,7 @@ def test_running_ui_observes_committed_progress_before_planner_returns(app, tmp_
         app.session_state["research_job"] = job
         app.run()
         assert not app.exception and job.snapshot()["status"] == "running"
-        assert widget(app, "metric", "Papers inspected").value == "1"
+        assert widget(app, "metric", "Metadata records admitted").value == "1"
         assert widget(app, "button", "Start retrieval").disabled
         assert not app.success
         assert job.snapshot()["result"] is None
@@ -182,8 +183,50 @@ def test_clm_ui_executes_real_context_edits_and_displays_actual_snapshots(app, m
     assert not app.exception
     assert job.config.controlled and job.config.context_management == "clm"
     assert widget(app, "metric", "Accepted context edits").value == "1"
-    assert widget(app, "metric", "Reported input tokens").value == "100"
+    # Two planning/edit turns and one terminal attempt share the same ceiling.
+    assert widget(app, "metric", "Reported input tokens").value == "150"
+    assert job.snapshot()["result"]["synthesis"]["status"] == "evidence_only"
     assert json.loads(calls[1]["messages"][1]["content"])["active_context"] == "Keep observed evidence W1"
     assert any("Keep observed evidence W1" in block.value for block in app.code)
     assert widget(app, "selectbox", "Actual inference input/output snapshot")
     assert "PRIVATE-" not in str(app)
+
+
+def test_checked_synthesis_is_the_first_tab_and_precedes_configuration(app, monkeypatch):
+    calls = []
+    def execute(config, selected, **kwargs):
+        def handler(request):
+            payload = json.loads(json.loads(request.content)["messages"][1]["content"])
+            calls.append(payload)
+            source = payload["evidence"][0]
+            claim = {"text": "The abstract describes adaptive retrieval.",
+                "citations": [{"work_id": source["id"], "quote": source["abstract_excerpt"]}]}
+            return httpx.Response(200, json={"choices": [{"message": {"content": json.dumps({
+                "answer": [claim], "foundations": [claim], "comparison": [],
+                "limitations": ["One metadata abstract cannot establish a complete review."]})}}],
+                "usage": {"prompt_tokens": 50, "completion_tokens": 20}})
+        return start_research(config, selected, **kwargs, planner_transport=httpx.MockTransport(handler))
+    monkeypatch.setattr(web_ui, "start_research", execute)
+    widget(app, "selectbox", "Retrieval source").set_value("Cached corpus / snapshot").run()
+    widget(app, "text_area", "Research question").set_value("adaptive retrieval")
+    widget(app, "number_input", "Maximum actions").set_value(1)
+    widget(app, "number_input", "Maximum LLM calls").set_value(1)
+    widget(app, "button", "Start retrieval").click().run()
+    app.session_state["research_job"].join(10)
+    app.run()
+    assert not app.exception and len(calls) == 1
+    assert app.tabs[0].label == "Research answer"
+    assert any("abstract describes adaptive retrieval" in e.value for e in app.markdown)
+    assert widget(app, "metric", "Sources sent to model").value == "1"
+    assert widget(app, "metric", "Model calls (all stages)").value == "1"
+    assert any(e.label == "Download research answer" for e in app.get("download_button"))
+    assert app.subheader[0].value == "Research answer"
+    assert widget(app, "selectbox", "Live hosted request (planning and synthesis)")
+
+
+def test_round_limit_conflict_is_visible_without_raising_any_limits(app):
+    widget(app, "number_input", "Maximum actions").set_value(30).run()
+    assert widget(app, "number_input", "Maximum rounds").value == 5
+    assert widget(app, "number_input", "Maximum LLM calls").value == 4
+    assert any("5-round ceiling" in e.value for e in app.warning)
+    assert any("1 call is reserved" in e.value for e in app.caption)

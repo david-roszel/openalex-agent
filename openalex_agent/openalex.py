@@ -138,11 +138,12 @@ class OpenAlexClient:
             delay = min(2 ** attempt, 30)
             status = None
             response = None
+            transport_error = None
             try:
                 response = self.http.get(endpoint, params=params)
                 status = response.status_code
-            except httpx.TransportError:
-                pass
+            except httpx.TransportError as exc:
+                transport_error = {"type": type(exc).__name__, "cause_type": type(exc.__cause__).__name__ if exc.__cause__ else None}
             finally:
                 elapsed = time.perf_counter() - started
                 self.usage.api_seconds += elapsed
@@ -190,7 +191,8 @@ class OpenAlexClient:
                         except (TypeError, ValueError, OverflowError):
                             pass
             self.usage.errors += 1
-            self.db.event(self.run_id, "request_error", {"endpoint": endpoint, "status": status, "attempt": attempt + 1})
+            self.db.event(self.run_id, "request_error", {"endpoint": endpoint, "status": status, "attempt": attempt + 1,
+                **({"transport_error": transport_error} if transport_error else {})})
             logger.warning("OpenAlex request failed: endpoint=%s status=%s attempt=%s", endpoint, status, attempt + 1)
             if status is not None and status not in (408, 429, 500, 502, 503, 504):
                 if status == 401 and params.get("cursor") not in (None, "*") and not self.settings.api_key:

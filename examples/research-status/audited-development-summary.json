@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "classification": "AUDITED DEVELOPMENT AGGREGATES; NOT A NEW EXPERIMENT OR INDEPENDENT HUMAN EVALUATION",
+  "raw_private_data_distributed": false,
+  "general_graph_or_clm_superiority_established": false,
+  "historical_secondary_h3": {
+    "tasks": 30,
+    "repetitions": 3,
+    "terminal": 450,
+    "completed": 442,
+    "failed": 8,
+    "known_target_recall_at_10": {
+      "standard": 0.333333,
+      "llm": 0.414815,
+      "llm_graph": 0.422222,
+      "clm": 0.422222,
+      "clm_graph": 0.392593
+    },
+    "explicit_complete_directed_subgraphs_in_actual_inputs": 0,
+    "primary_h10_complete": false,
+    "scope": "Frozen-corpus known-target recovery, not independent general relevance; repeated task observations, unmatched baseline work, missing factual finals."
+  },
+  "revision7_feasibility": {
+    "terminal": 14,
+    "completed": 12,
+    "failed": 2,
+    "settled_requests": 396,
+    "estimated_gross_usd": "3.9438825",
+    "main_cells_executed": 0,
+    "main_cells_planned": 636,
+    "S_primary": {
+      "standard": 1,
+      "llm": 1,
+      "llm_graph": 1,
+      "clm": 1,
+      "clm_graph": 1
+    },
+    "L_objective_denominator": 84,
+    "L_checks_acquired": {
+      "standard": 27,
+      "llm": 59,
+      "llm_graph": 56,
+      "clm": 43,
+      "clm_graph": 58
+    },
+    "M_scheduled_records": 96,
+    "M_actual_exposed": {
+      "llm": 96,
+      "llm_graph": 96,
+      "clm": 18,
+      "clm_graph": 18
+    },
+    "M_operational_final_A": {
+      "llm": 0,
+      "llm_graph": 0.2,
+      "clm": 0,
+      "clm_graph": 0
+    },
+    "graph_bearing_requests": 115,
+    "repeated_directed_edge_records": 638,
+    "committed_context_edits": 32,
+    "scope": "One disjoint feasibility case per study; M failures preserved, no population efficacy estimate or synthesis-quality score."
+  },
+  "stopped_live_comparison": {
+    "planned": 45,
+    "completed": 6,
+    "interrupted": 1,
+    "not_run": 38,
+    "complete_primary_questions": 1,
+    "primary_known_target_recall_at_10": {
+      "standard": 0.5,
+      "llm": 0.5,
+      "llm_graph": 0.5,
+      "clm": 0.5,
+      "clm_graph": 0.5
+    },
+    "hosted_primary_answers": "incomplete_evidence",
+    "scope": "Live OpenAlex, distinct source/settings; administrative interruption, no repetitions or quality judgments."
+  },
+  "human_relevance": "NOT EVALUATED",
+  "independent_scientific_grounding": "NOT EVALUATED",
+  "audit_sources": [
+    {
+      "document": "HISTORICAL_RETRIEVAL_AUDIT.md",
+      "sha256": "c26999a96b93ea8bf42bd7aa2d4fc989b107b7d23525accc5827ee6c299e985f",
+      "availability": "Local archived audit; raw/source artifact distribution is not part of this public update."
+    },
+    {
+      "document": "REVISION7_PILOT_AUDIT.md",
+      "sha256": "e6015f845d4cff27d79ea7728bed2ab9e4726069613838a3eec2c53a655a0331",
+      "availability": "Local archived audit; raw/source artifact distribution is not part of this public update."
+    },
+    {
+      "document": "EVIDENCE_UPDATE.md",
+      "sha256": "427b7fe568908307782263f0a61e24199ceaaacd9c0b60907e008728efcdcf87",
+      "availability": "Local archived audit; raw/source artifact distribution is not part of this public update."
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "created_at": "2026-11-02T23:17:50.818370+00:00",
+  "count": 39,
+  "sha256": "140a68d388cf546cbc1f1817e668ce3053dd3f6f60836f108c719245f65c2730",
+  "ids": [
+    "https://openalex.org/W1975107573",
+    "https://openalex.org/W1995945562",
+    "https://openalex.org/W1997423738",
+    "https://openalex.org/W205829674",
+    "https://openalex.org/W2095601341",
+    "https://openalex.org/W2163089586",
+    "https://openalex.org/W22250617",
+    "https://openalex.org/W2332282745",
+    "https://openalex.org/W2517070929",
+    "https://openalex.org/W2889787757",
+    "https://openalex.org/W2891115359",
+    "https://openalex.org/W3023035014",
+    "https://openalex.org/W3094339628",
+    "https://openalex.org/W3097918897",
+    "https://openalex.org/W3115947671",
+    "https://openalex.org/W3190126809",
+    "https://openalex.org/W3196268181",
+    "https://openalex.org/W4206089953",
+    "https://openalex.org/W4221160682",
+    "https://openalex.org/W4292004714",
+    "https://openalex.org/W4313531743",
+    "https://openalex.org/W4385565351",
+    "https://openalex.org/W4389519598",
+    "https://openalex.org/W4392226889",
+    "https://openalex.org/W4399198064",
+    "https://openalex.org/W4404405573",
+    "https://openalex.org/W4411113434",
+    "https://openalex.org/W4412889884",
+    "https://openalex.org/W4415745178",
+    "https://openalex.org/W7128618358",
+    "https://openalex.org/W7155411206",
+    "https://openalex.org/W7164386764",
+    "https://openalex.org/W7172503845",
+    "https://openalex.org/W7212031143",
+    "https://openalex.org/W7213952729",
+    "https://openalex.org/W7214520912",
+    "https://openalex.org/W7220889768",
+    "https://openalex.org/W759515131",
+    "https://openalex.org/W986028939"
+  ],
+  "acquisition": [
+    {
+      "query_id": "p1",
+      "query": "adaptive retrieval augmented generation",
+      "anchor": "https://openalex.org/W4415745178",
+      "seed_ids": [
+        "https://openalex.org/W4415745178",
+        "https://openalex.org/W4411113434",
+        "https://openalex.org/W4412889884",
+        "https://openalex.org/W7213952729",
+        "https://openalex.org/W7220889768",
+        "https://openalex.org/W4399198064",
+        "https://openalex.org/W7212031143",
+        "https://openalex.org/W7172503845"
+      ],
+      "reference_ids": [
+        "https://openalex.org/W2889787757",
+        "https://openalex.org/W3115947671",
+        "https://openalex.org/W3190126809"
+      ],
+      "citation_ids": []
+    },
+    {
+      "query_id": "p2",
+      "query": "citation network scholarly recommendation",
+      "anchor": "https://openalex.org/W4206089953",
+      "seed_ids": [
+        "https://openalex.org/W4206089953",
+        "https://openalex.org/W2163089586",
+        "https://openalex.org/W1997423738",
+        "https://openalex.org/W2891115359",
+        "https://openalex.org/W1975107573",
+        "https://openalex.org/W2517070929",
+        "https://openalex.org/W3097918897",
+        "https://openalex.org/W2332282745"
+      ],
+      "reference_ids": [
+        "https://openalex.org/W22250617",
+        "https://openalex.org/W205829674",
+        "https://openalex.org/W986028939"
+      ],
+      "citation_ids": [
+        "https://openalex.org/W4292004714",
+        "https://openalex.org/W4404405573",
+        "https://openalex.org/W4313531743"
+      ]
+    },
+    {
+      "query_id": "p3",
+      "query": "scientific claim verification evidence retrieval",
+      "anchor": "https://openalex.org/W3023035014",
+      "seed_ids": [
+        "https://openalex.org/W4221160682",
+        "https://openalex.org/W7164386764",
+        "https://openalex.org/W3023035014",
+        "https://openalex.org/W7128618358",
+        "https://openalex.org/W7214520912",
+        "https://openalex.org/W3094339628",
+        "https://openalex.org/W7155411206",
+        "https://openalex.org/W4392226889"
+      ],
+      "reference_ids": [
+        "https://openalex.org/W759515131",
+        "https://openalex.org/W1995945562",
+        "https://openalex.org/W2095601341"
+      ],
+      "citation_ids": [
+        "https://openalex.org/W3196268181",
+        "https://openalex.org/W4389519598",
+        "https://openalex.org/W4385565351"
+      ]
+    }
+  ]
+}

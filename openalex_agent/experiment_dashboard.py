@@ -519,6 +519,7 @@ def read_comparison(directory,root):
             merged["artifact_directory"]=str(allowed_path(local if local.is_dir() else r["directory"],root))
         except (ValueError,KeyError):merged["artifact_directory"]=None
         usage=safe_json(Path(merged["artifact_directory"])/"result.json",root,{}).get("llm_usage",{}) if merged["artifact_directory"] else {}
+        usage=usage if isinstance(usage,dict) else {}
         if usage.get("usage_unreported_calls",1):merged["total_reported_tokens"]=None
         rows.append(merged)
     pressure=[]
@@ -602,7 +603,12 @@ def figure_export(loaded,metric):
     frame[metric]=pd.to_numeric(frame[metric],errors="coerce");frame=frame.dropna(subset=[metric])
     if frame.empty:raise ValueError("Metric is NOT EVALUATED")
     means=frame.groupby(["method","variant","action_budget"])[metric].mean()
-    fig=Figure(figsize=(9,5));ax=fig.subplots();ax.bar(["/".join(map(str,k)) for k in means.index],means.values)
+    from .ui_theme import METHOD_COLORS, CREAM, CHARCOAL, TAN
+    fig=Figure(figsize=(9,5),facecolor=CREAM);ax=fig.subplots();ax.set_facecolor(CREAM)
+    ax.bar(["/".join(map(str,k)) for k in means.index],means.values,
+           color=[METHOD_COLORS.get(k[0],"#657A3F") for k in means.index])
+    ax.tick_params(colors=CHARCOAL)
+    for spine in ax.spines.values():spine.set_color(TAN)
     ax.tick_params(axis="x",rotation=30);ax.set_ylabel(metric)
     ax.set_title(loaded["category"]+" · descriptive trial means")
     fig.text(.01,.01,"Source: "+loaded["directory"]+" · evaluation status retained in exported CSV",fontsize=6)

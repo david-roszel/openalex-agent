@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 import math
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 
@@ -40,8 +41,10 @@ class Settings:
                 raise ValueError(f"{name} must be a nonnegative integer")
 
     @classmethod
-    def from_env(cls) -> "Settings":
-        load_dotenv()
+    def from_env(cls, env_file=None) -> "Settings":
+        # Resolve relative to this installation, rather than a caller's cwd or
+        # another checkout. Explicit environment variables still take priority.
+        load_dotenv(dotenv_path=env_file or Path(__file__).resolve().parents[1] / ".env")
         def number(name: str, default: str, cast):
             try:
                 return cast(os.getenv(name, default))

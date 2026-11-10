@@ -4,3 +4,97 @@ headless = true
 
 [browser]
 gatherUsageStats = false
+
+[theme]
+primaryColor = "#A9C4AC"
+backgroundColor = "#131C18"
+secondaryBackgroundColor = "#1D2A23"
+textColor = "#EAECE3"
+font = "sans-serif"
+headingFont = "serif"
+borderColor = "#526457"
+showWidgetBorder = true
+chartCategoricalColors = ["#C6B99E", "#A9C4AC", "#B2C680", "#D6AA7D", "#8FBDB8"]
+chartSequentialColors = ["#244B3B", "#426B51", "#729778", "#A9C4AC", "#D9E6D6"]
+blueColor = "#8FBDB8"
+blueBackgroundColor = "#213A35"
+blueTextColor = "#C3E2DD"
+greenColor = "#B2C680"
+greenBackgroundColor = "#293825"
+greenTextColor = "#D7E5B8"
+orangeColor = "#D6AA7D"
+orangeBackgroundColor = "#3B2F21"
+orangeTextColor = "#E9C79E"
+yellowColor = "#D6AA7D"
+yellowBackgroundColor = "#3B2F21"
+yellowTextColor = "#E9C79E"
+redColor = "#DD9B88"
+redBackgroundColor = "#3C2824"
+redTextColor = "#F0BCAC"
+base = "dark"
+
+[theme.sidebar]
+backgroundColor = "#18251E"
+secondaryBackgroundColor = "#223329"
+textColor = "#EAECE3"
+
+[theme.light]
+primaryColor = "#244B3B"
+backgroundColor = "#F6F1E7"
+secondaryBackgroundColor = "#EEE8DC"
+textColor = "#29332D"
+font = "sans-serif"
+headingFont = "serif"
+borderColor = "#D8C4A5"
+showWidgetBorder = true
+chartCategoricalColors = ["#786B57", "#244B3B", "#657A3F", "#A7794C", "#456B6A"]
+chartSequentialColors = ["#E8EDDF", "#B8C6AC", "#8BA58B", "#52785D", "#244B3B"]
+blueColor = "#456B6A"
+blueBackgroundColor = "#E5EEEA"
+blueTextColor = "#244B3B"
+greenColor = "#657A3F"
+greenBackgroundColor = "#E8EDDF"
+greenTextColor = "#244B3B"
+orangeColor = "#946332"
+orangeBackgroundColor = "#F2E6D3"
+orangeTextColor = "#744A25"
+yellowColor = "#946332"
+yellowBackgroundColor = "#F2E6D3"
+yellowTextColor = "#744A25"
+redColor = "#9C4F3D"
+redBackgroundColor = "#F4E5DD"
+redTextColor = "#7C3D2F"
+
+[theme.light.sidebar]
+backgroundColor = "#E8EDDF"
+secondaryBackgroundColor = "#F6F1E7"
+textColor = "#29332D"
+
+[theme.dark]
+primaryColor = "#A9C4AC"
+backgroundColor = "#131C18"
+secondaryBackgroundColor = "#1D2A23"
+textColor = "#EAECE3"
+borderColor = "#526457"
+chartCategoricalColors = ["#C6B99E", "#A9C4AC", "#B2C680", "#D6AA7D", "#8FBDB8"]
+chartSequentialColors = ["#244B3B", "#426B51", "#729778", "#A9C4AC", "#D9E6D6"]
+blueColor = "#8FBDB8"
+blueBackgroundColor = "#213A35"
+blueTextColor = "#C3E2DD"
+greenColor = "#B2C680"
+greenBackgroundColor = "#293825"
+greenTextColor = "#D7E5B8"
+orangeColor = "#D6AA7D"
+orangeBackgroundColor = "#3B2F21"
+orangeTextColor = "#E9C79E"
+yellowColor = "#D6AA7D"
+yellowBackgroundColor = "#3B2F21"
+yellowTextColor = "#E9C79E"
+redColor = "#DD9B88"
+redBackgroundColor = "#3C2824"
+redTextColor = "#F0BCAC"
+
+[theme.dark.sidebar]
+backgroundColor = "#18251E"
+secondaryBackgroundColor = "#223329"
+textColor = "#EAECE3"

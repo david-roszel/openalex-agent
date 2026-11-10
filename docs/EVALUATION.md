@@ -1,7 +1,6 @@
 # Evaluation and research status
 
-The release contains engineering infrastructure and synthetic correctness cases,
-not empirical evidence that graph memory or CLM improves retrieval.
+The release contains engineering infrastructure, small synthetic/authentic metadata fixtures, and qualified historical aggregate observations. None establishes that graph memory or CLM improves retrieval. See RESULTS_AND_LIMITATIONS.md; raw private empirical artifacts are not distributed.
 
 Separate diagnostics, development protocol testing and final research evaluation.
 Use independently judged, adequately sourced data for empirical conclusions.

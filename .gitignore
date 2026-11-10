@@ -51,3 +51,18 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Never publish instructor credentials or private submission packages.
+credentials/
+private-dist/
+*.env
+**/*.env
+*.zip
+*.tar
+*.tar.gz
+# Independent frozen runtime environments and local experiment inputs.
+versions/**/.venv/
+versions/**/data/
+
+# Generated standalone-demo receipts, not source documentation.
+/docs/submission/

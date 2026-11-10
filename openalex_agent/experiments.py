@@ -69,12 +69,15 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                     trials: int = 3, budget: Budget | None = None, methods: tuple[str, ...] | None = None,
                     allow_deterministic: bool = False, ablations: bool = False, suite: str = "legacy",
                     inference_limits=None, require_evidence: bool = False, factual_questions_path: str | None = None,
-                    trial_seeds: tuple[int, ...] | None = None, cancel_check=None) -> list[dict]:
+                    trial_seeds: tuple[int, ...] | None = None, cancel_check=None,
+                    completion_guidance: bool = False) -> list[dict]:
     from .controlled import ARCHITECTURES, ALL_ARCHITECTURES, META_ARCHITECTURES, ControlledController, context_strategy
     from .context_planner import ContextPlanner, EngineeringContextModel, InferenceLimits
     from .research_metrics import efficiency_metrics, retrieval_diagnostics
     if suite not in ("legacy", "controlled-five", "controlled-seven"):
         raise ValueError("Choose legacy, controlled-five or controlled-seven experiment suite")
+    if type(completion_guidance) is not bool or completion_guidance and suite == "legacy":
+        raise ValueError("Shared completion guidance requires an explicit controlled-suite boolean")
     available = METHODS if suite == "legacy" else ALL_ARCHITECTURES if suite == "controlled-seven" else ARCHITECTURES
     methods = available if methods is None else methods
     inference_limits = inference_limits or InferenceLimits()
@@ -169,7 +172,12 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
         "has_relevance_judgments": bool(labels_path)}
     if suite in ("controlled-five", "controlled-seven"):
         from .context_planner import CONTEXT_POLICY_VERSION
+        from .research_completion import VERSION as COMPLETION_VERSION, SUFFIX
         manifest["legacy_context_policy_version"] = CONTEXT_POLICY_VERSION
+        manifest["research_completion_guidance"] = {
+            "enabled": completion_guidance,
+            "version": COMPLETION_VERSION if completion_guidance else None,
+            "suffix_sha256": hashlib.sha256(SUFFIX.encode()).hexdigest() if completion_guidance else None}
     atomic_json(directory / "experiment.json", manifest)
     if suite == "controlled-seven":
         from .meta_context import META_VERSION, VENDOR, reference_provenance
@@ -211,11 +219,12 @@ def _run_experiments(corpus_path: str, questions_path: str, db: Database, planne
                             if method in META_ARCHITECTURES:
                                 from .meta_planner import MetaContextPlanner, MetaEngineeringModel
                                 if planner.name == "deterministic": planner = MetaEngineeringModel()
-                                planner = MetaContextPlanner(planner, limits=inference_limits, require_evidence=require_evidence)
+                                planner = MetaContextPlanner(planner, limits=inference_limits, require_evidence=require_evidence,
+                                                             completion_guidance=completion_guidance)
                             else:
                                 if planner.name == "deterministic": planner = EngineeringContextModel()
                                 planner = ContextPlanner(planner, mode=context_strategy(method), limits=inference_limits,
-                                                         require_evidence=require_evidence)
+                                                         require_evidence=require_evidence, completion_guidance=completion_guidance)
                             controller = ControlledController(q["question"], corpus, db, architecture=method, planner=planner,
                                 budget=retrieval_budget, scoring=scoring, output=str(directory / "runs"))
                         else:

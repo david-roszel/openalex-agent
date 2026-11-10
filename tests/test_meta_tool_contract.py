@@ -1,4 +1,4 @@
-"""Contract regressions: synthetic invalid argument shapes and real local Meta semantics.
+"""Contract regressions: historical rejected calls and real local Meta semantics.
 
 Provider decisions in these tests are explicitly mocked. No hosted inference.
 """
@@ -37,7 +37,7 @@ def declaration():
 
 
 @pytest.mark.parametrize('failure',FAILURES,ids=lambda f:f"{f['architecture']}-call-{f['call']}")
-def test_synthetic_invalid_arguments_are_not_repaired_and_never_reach_parser(tmp_path,failure):
+def test_original_arguments_are_not_repaired_and_never_reach_parser(tmp_path,failure):
     arguments=deepcopy(failure['arguments'])
     assert Draft202012Validator(failure['original_parameters']).is_valid(arguments)
     corrected=declaration()['parameters']

@@ -86,7 +86,7 @@ class ContextPlanner:
     """
 
     def __init__(self, base, *, mode: str, limits: InferenceLimits | None = None, require_evidence: bool = False,
-                 archive_reads: bool = True):
+                 archive_reads: bool = True, completion_guidance: bool = False):
         if mode not in ("conventional", "clm") or not hasattr(base, "_call"):
             raise ValueError("Context planner requires a supported model transport and context mode")
         if type(require_evidence) is not bool or limits is not None and not isinstance(limits, InferenceLimits):
@@ -95,6 +95,9 @@ class ContextPlanner:
         if hasattr(base, "set_inference_limits"):
             base.set_inference_limits(self.limits)
         self.require_evidence = require_evidence
+        if type(completion_guidance) is not bool:
+            raise ValueError("Completion-guidance availability must be boolean")
+        self.completion_guidance = completion_guidance
         if type(archive_reads) is not bool:
             raise ValueError("Archive availability must be boolean")
         self.archive_reads=archive_reads
@@ -104,6 +107,9 @@ class ContextPlanner:
                               "reliability_version": RELIABILITY_VERSION,
                               "context_management": mode, "limits": asdict(self.limits),
                               "shared_archive_read": True, "require_evidence": require_evidence}
+        if completion_guidance:
+            from .research_completion import VERSION
+            self.configuration["research_completion_guidance"] = VERSION
         self.fingerprint = hashlib.sha256(serialized(self.configuration).encode()).hexdigest()
         if not archive_reads:
             self.configuration["shared_archive_read"]=False
@@ -391,6 +397,10 @@ class ContextPlanner:
             system=system.replace("Both modes can read prior delivered observations.","Archive recovery is disabled in both modes for this diagnostic.")
             system+=" Historical archive reads are unavailable. Do not request read_observation."
             self._system=system
+        if self.completion_guidance:
+            from .research_completion import clarify
+            system = clarify(system)
+            self._system = system
         while True:
             # Incorporate genuinely changed environment observations only when they fit.
             # Never silently discard or overwrite active model-managed context.

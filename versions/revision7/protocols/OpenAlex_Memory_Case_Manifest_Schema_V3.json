@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openalex-agent.local/schemas/memory-case-manifest-v3.json",
+  "title": "OpenAlex controlled memory fixed case manifest, public to experiment harness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "corpus_sha256",
+    "sampling_seed",
+    "cases"
+  ],
+  "properties": {
+    "protocol_version": {
+      "const": "openalex-multihorizon-v3-engineering-1"
+    },
+    "corpus_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sampling_seed": {
+      "type": "integer"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^W[0-9]+$"
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work_id",
+        "title",
+        "year",
+        "excerpt",
+        "references_to_exposed_works",
+        "source_record_sha256"
+      ],
+      "properties": {
+        "work_id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "year": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2100
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 20
+        },
+        "references_to_exposed_works": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "uniqueItems": true
+        },
+        "source_record_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "batch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "batch_number",
+        "papers"
+      ],
+      "properties": {
+        "batch_number": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "papers": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/record"
+          }
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "domain",
+        "density_stratum",
+        "batches",
+        "questions",
+        "case_source_sha256"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "domain": {
+          "type": "string",
+          "minLength": 1
+        },
+        "density_stratum": {
+          "enum": [
+            "dense",
+            "sparse"
+          ]
+        },
+        "batches": {
+          "type": "array",
+          "minItems": 32,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/batch"
+          }
+        },
+        "questions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6"
+          ],
+          "properties": {
+            "q1": {
+              "type": "string",
+              "minLength": 10
+            },
+            "q2": {
+              "type": "string",
+              "minLength": 10
+            },
+            "q3": {
+              "type": "string",
+              "minLength": 10
+            },
+            "q4": {
+              "type": "string",
+              "minLength": 10
+            },
+            "q5": {
+              "type": "string",
+              "minLength": 10
+            },
+            "q6": {
+              "type": "string",
+              "minLength": 10
+            }
+          }
+        },
+        "case_source_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

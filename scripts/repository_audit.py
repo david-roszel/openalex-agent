@@ -14,13 +14,13 @@ import shutil
 import subprocess
 
 
-DIRECTORIES = ("openalex_agent", "tests", "benchmarks", "docs", "scripts", ".github")
-ROOT_FILES = (".gitignore", ".env.example", "README.md", "pyproject.toml",
-              "requirements.txt", "requirements.lock.txt", "requirements-ui.lock.txt", "requirements-gemini.txt",
-              "main.py", "app.py", "launch-dashboard.sh", "PUBLISHING.md", "PUBLIC_MANIFEST.json", "LICENSE", "CITATION.cff",
+DIRECTORIES = ("openalex_agent", "tests", "benchmarks", "docs", "scripts", ".github", "versions", "integration", "examples", "tools")
+ROOT_FILES = (".gitattributes", ".gitignore", ".env.example", "README.md", "pyproject.toml",
+              "requirements.txt", "requirements.lock.txt", "requirements-ui.lock.txt", "requirements-gemini.txt", "PUBLISHING.md", "PUBLIC_MANIFEST.json",
+              "main.py", "app.py", "live_app.py", "legacy_app.py", "launch-live-research.sh", "launch-dashboard.sh", "LICENSE", "CITATION.cff",
               ".streamlit/config.toml")
 LOCAL_DIRECTORIES = {"data", ".venv", "venv", ".git", ".aws", ".codex", ".agents",
-                     ".vscode", ".idea", "__pycache__", ".pytest_cache", "build", "dist"}
+                     ".vscode", ".idea", "__pycache__", ".pytest_cache", "build", "dist", "private-dist", "credentials"}
 PATTERNS = {
     "provider-key pattern": re.compile(rb"(?:sk-[A-Za-z0-9_-]{20,}|gsk_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{30,})"),
     "Git-host token pattern": re.compile(rb"(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|glpat-[A-Za-z0-9_-]{20,})"),
@@ -31,9 +31,12 @@ PATTERNS = {
 
 def local_only(name):
     path = Path(name)
-    return (any(p in LOCAL_DIRECTORIES or p.endswith(".egg-info") for p in path.parts)
-            or path.name != ".env.example" and (path.name == ".env" or path.name.startswith(".env."))
-            or path.suffix in (".pem", ".key", ".p12", ".pfx", ".pyc", ".log", ".db")
+    return (path.parts[:2] == ("docs", "submission")
+            or any(p in LOCAL_DIRECTORIES or p.endswith(".egg-info") for p in path.parts)
+            or path.name != ".env.example" and (path.name == ".env" or path.name.startswith(".env.") or path.name.endswith(".env"))
+            or path.suffix in (".pem", ".key", ".p12", ".pfx", ".pyc", ".log", ".db", ".zip", ".tar", ".gz")
+            or path.name.endswith(".private.json") or path.name in ("approval.json", "approval-template.json")
+            or path.suffix == ".json" and ("heldout" in path.name.lower() or "held-out" in path.name.lower())
             or ".sqlite" in path.name
             or path.name.startswith(("credentials", "service-account")) and path.suffix == ".json"
             or ".streamlit" in path.parts and path.name.startswith("secrets"))
@@ -107,6 +110,12 @@ def audit(root, *, staged=False):
             concerns.append({"path": name, "type": "symlink requires explicit review"})
         if local_only(name):
             concerns.append({"path": name, "type": "local-only artifact included"})
+        if Path(name).name == '.env.example':
+            for line in data.decode(errors='replace').splitlines():
+                if '=' in line and not line.lstrip().startswith('#'):
+                    key,value=line.split('=',1)
+                    if key.strip().endswith(('API_KEY','TOKEN','PASSWORD','SECRET')) and value.strip().strip("\"'"):
+                        concerns.append({"path":name,"type":"nonempty credential in configuration template"})
         if len(data) >= 10 * 1024 * 1024:
             concerns.append({"path": name, "type": "large publication file (10 MiB or more)"})
         for label, pattern in PATTERNS.items():
@@ -117,8 +126,8 @@ def audit(root, *, staged=False):
                 concerns.append({"path": name, "type": "configured sensitive value: " + label})
     required = [".gitignore", ".env.example", "README.md", "pyproject.toml",
                 "tests/fixtures/openalex-list.synthetic.json",
-                "tests/fixtures/synthetic-corpus/manifest.json",
-                "tests/fixtures/synthetic-corpus/papers.jsonl",
+                "tests/fixtures/development-corpus/manifest.json",
+                "tests/fixtures/development-corpus/papers.jsonl",
                 "openalex_agent/tokenizer_data/o200k_base.tiktoken",
                 "openalex_agent/tokenizer_data/LICENSE"]
     present = {item["path"] for item in inventory}

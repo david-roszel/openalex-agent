@@ -1,0 +1,7 @@
+The previous public release exposed the seven-method research core and a development dashboard. This update makes the current question→retrieval→cited-answer application available alongside the five-workspace Scientific Evaluation interface, and separates the five primary methods from exploratory official Meta CLM.
+
+The update carries forward November8 UI/reliability work, source-aware graph/context delivery, bounded synthesis and durable request accounting. It preserves generic public review/freeze inputs and adds development-only pooled collection without weakening final held-out/paid review gates. Frozen R7/V2 benchmark and scoring/scheduler code is isolated under versions/revision7, with original source pins and synthetic portability tests, rather than mixed into current app behavior.
+
+Public docs explain installation, both UIs, version choices, scientific limitations and previously audited aggregate observations. No private credentials/grading archive, complete corpus, held-out questions, human annotations, approval records or raw hosted traces are included. Graph/CLM superiority, hallucination reduction and independent answer accuracy remain unestablished.
+
+Validation uses a fresh local development/UI installation, the complete root offline suite, isolated R7 scoring/concurrency tests, publication/manifest checks and documentation/provenance checks. Exact observed test counts and any skips are recorded in VALIDATION.md; CI declares Python 3.11/3.14 but has not run on the unpushed branch. No paid inference or new scientific experiment was run.

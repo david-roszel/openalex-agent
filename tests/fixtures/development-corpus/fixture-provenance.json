@@ -1,0 +1,10 @@
+{
+  "purpose": "Offline regression fixture, not independent evaluation ground truth",
+  "origin": "data/frozen/three-question-pilot-v1/evidence/graph-ablation-pilot-2026-11-02/corpus",
+  "frozen_receipt": "benchmarks/frozen_pilot_v1.json",
+  "count": 39,
+  "files": {
+    "manifest.json": "5a4550bb3cfb12a945cdfea7e8c772ff2f528c2c14c12a5acac24194a775b08b",
+    "papers.jsonl": "140a68d388cf546cbc1f1817e668ce3053dd3f6f60836f108c719245f65c2730"
+  }
+}

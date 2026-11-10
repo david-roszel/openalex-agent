@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openalex-agent.local/schemas/memory-answer-v3-r7.json",
+  "title": "Revision7 independently scored memory answers with explicit abstentions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "q1",
+    "q2",
+    "q3",
+    "q4",
+    "q5",
+    "q6"
+  ],
+  "properties": {
+    "q1": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/work"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "work_id"
+          ],
+          "properties": {
+            "work_id": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    },
+    "q2": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "year"
+          ],
+          "properties": {
+            "year": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2100
+            }
+          }
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "year"
+          ],
+          "properties": {
+            "year": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    },
+    "q3": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/work"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "work_id"
+          ],
+          "properties": {
+            "work_id": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    },
+    "q4": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "citing_work_id",
+            "cited_work_id"
+          ],
+          "properties": {
+            "citing_work_id": {
+              "$ref": "#/$defs/openalexWorkId"
+            },
+            "cited_work_id": {
+              "$ref": "#/$defs/openalexWorkId"
+            }
+          }
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "citing_work_id",
+            "cited_work_id"
+          ],
+          "properties": {
+            "citing_work_id": {
+              "type": "null"
+            },
+            "cited_work_id": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    },
+    "q5": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "#/$defs/openalexWorkId"
+              }
+            }
+          }
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    },
+    "q6": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "SUPPORTED",
+                "NOT_ESTABLISHED"
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "openalexWorkId": {
+      "type": "string",
+      "pattern": "^W[0-9]+$"
+    },
+    "work": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work_id"
+      ],
+      "properties": {
+        "work_id": {
+          "$ref": "#/$defs/openalexWorkId"
+        }
+      }
+    }
+  }
+}
