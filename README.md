@@ -1,189 +1,124 @@
-# OpenAlex / CLM Research Agent
+# OpenAlex Research Agent
 
-Research software for comparing graph memory and model-controlled working
-context in academic literature retrieval. It includes an OpenAlex client,
-incremental knowledge graph, bounded LLM planning, a controlled seven-method
-benchmark, evidence assessment and a local Streamlit dashboard.
+An instrumented scholarly research system with live OpenAlex retrieval, bounded hosted planning, persistent citation graphs, CLM-inspired working-context edits, source-traceable synthesis and a Streamlit evaluation dashboard.
 
-**Research status:** the implementation and correctness diagnostics are available.
-This release does not establish improvements in retrieval quality, factual
-accuracy, retention, latency or cost from CLM or graph memory. No final judged
-held-out evaluation or independent human annotations are distributed.
+**Research status:** five architectures form the primary comparison. Official Meta CLM remains exploratory. Existing development observations establish implemented mechanisms and important failure modes; they do **not** establish graph/CLM superiority, hallucination reduction, independent factual accuracy or broad generalization. See [results and limitations](docs/RESULTS_AND_LIMITATIONS.md).
 
-## Architecture and configurations
+## Install
 
-| Method | Graph memory | Working context | Planning |
-| --- | --- | --- | --- |
-| `standard` | No | Single-search baseline | No LLM |
-| `llm` | No | Environment-managed bounded context | Hosted LLM |
-| `llm_graph` | Yes | Environment-managed bounded context | Hosted LLM |
-| `clm` | No | Model-editable bounded working text | Hosted LLM |
-| `clm_graph` | Yes | Model-editable bounded working text | Hosted LLM |
-| `meta_clm` | No | Official Meta conversation editing | Hosted LLM |
-| `meta_clm_graph` | Yes | Official Meta conversation editing | Hosted LLM |
-
-The six agent cells form a graph(2) × context(3) design; `standard` is a separate baseline.
-The original four agent cells remain available as a 2×2 design. They share retrieval tools,
-corpus access, validation rules and final lexical ranking. Graph planning inputs
-and context-management behavior intentionally differ. All methods start with
-isolated state. Select `--suite controlled-seven` for all seven methods or
-`--suite controlled-five` for the original five; the older CLI `legacy` suite is
-a separate compatibility interface, not this factorial design.
-
-OpenAlex metadata enters the retrieval/cache layer, then observed records enter
-agent memory and optionally the graph. The planner chooses validated actions;
-the controller applies budgets and commits observations. CLM-inspired agents
-can edit working text and recover archived observations. Metadata, graph records
-and raw evidence remain authoritative outside that editable text.
-
-Meta uses its pinned official renderer, parser, edit gate and synchronizer through
-a restricted conversation-file interface. The vendored components retain **CC BY-NC
-4.0** and their NOTICE; no project-wide license is inferred. Terra Responses and
-the optional Gemini ADC adapter are supported. See [seven-method integration](docs/SEVEN_ARCHITECTURES.md).
-
-The November 8 legacy CLM correction preserves character/token limits, accepts
-validated STOP with pending archived evidence, and prevents capacity/admission
-failures from causing retrieval fallback. Its policy identity is
-`controlled-context-v2-capacity-stop`; historical experiments retain their original
-meaning. See [capacity and termination](docs/CLM_CAPACITY_TERMINATION_CORRECTION.md).
-
-## Install and test
-
-Python 3.11+ is declared. Local release verification uses Python 3.14; other
-interpreters and the GitHub Actions matrix require their own CI verification.
+Python 3.11+ is declared; Python 3.14/Linux is locally tested. On Ubuntu, install `python3-venv` and `python3-pip` if necessary.
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e '.[dev,ui]'
-python -m pytest
+.venv/bin/python -m pip install -e '.[dev,ui]'
+test -f .env || cp .env.example .env
 ```
 
-Dependencies are declared in `pyproject.toml`. `requirements.txt` installs the
-core development extras. `requirements-ui.lock.txt` captures a Python 3.14 UI/dev
-environment; install it followed by `python -m pip install --no-deps -e .` when
-that environment is appropriate. Lock snapshots contain version pins, not
-cross-platform wheel archives or package integrity hashes.
+Use your own keys in the ignored `.env` for live research. Saved-output inspection, scripted diagnostics and offline tests need no credentials. The checked-in template contains none. Provider access, current pricing and billing must be verified for your own account; the recorded Terra configuration is not a guarantee of availability.
 
-Offline tests require no credentials, network APIs or private data. The bundled
-fixtures are explicitly synthetic. Tokenizer ranks and their upstream MIT
-license are packaged to avoid tokenizer downloads during tests.
+## Two interfaces
 
-For live use, copy `.env.example` to a local `.env` and enter your own OpenAlex
-key and HTTPS hosted-planner endpoint/key/model. Provider/model access and request
-parameters depend on your account. No model is recommended or preconfigured in
-this release. See [configuration](docs/CONFIGURATION.md). Live requests may incur
-charges; offline commands below use deterministic policies and local snapshots.
-
-## Launch the dashboard
+### Live Research: question → investigation → cited answer
 
 ```bash
-./launch-dashboard.sh
-# Use another port when needed:
-OPENALEX_DASHBOARD_PORT=8502 ./launch-dashboard.sh
+./launch-live-research.sh
 ```
 
-Open <http://localhost:8501> (or the chosen port). `python -m streamlit run app.py`
-is the direct alternative. The launcher binds to localhost and disables usage
-telemetry. The four workspaces are Experiment Dashboard, Long-Horizon Testing,
-Saved Experiments and Individual research.
+Open **http://127.0.0.1:8521**. Advanced Settings selects conventional, graph, CLM or combined hosted research, source type, limits and saved runs. A saved run opens without inference. Clicking **Research** starts an individual hosted investigation and can incur charges; it does not authorize a benchmark campaign.
 
-Start with **Diagnostics → Comparison → Run Comparison**. Select all five
-methods, or a graph/CLM pair, inspect shared settings and compare actual recorded
-outputs. Diagnostics use scripted models and synthetic evidence. Context views
-show requests and committed edits; graph views show planning inputs and actions.
-Cancellation preserves partial artifacts. Saved runs can be inspected without
-new calls. Missing judgments display NOT EVALUATED; failed pressure conditions
-are labeled INVALID PRESSURE CONDITION and excluded from aggregate displays.
+For another port: `OPENALEX_DASHBOARD_PORT=8541 ./launch-live-research.sh`. For an optional recorded-only session: `OPENALEX_DEMO_READ_ONLY=1 ./launch-live-research.sh`; use `0` or unset it for normal live research. No private research trace or grading key is shipped.
 
-Empirical modes require user-supplied, independently reviewed data and pinned
-protocol approval. Paid confirmation does not bypass readiness. No private
-question sets, annotations, approval files or past experiments are included.
-See [dashboard usage](docs/DASHBOARD.md) and [evaluation](docs/EVALUATION.md).
-
-## Run the agent and reproduce an engineering benchmark
-
-An offline agent loop over synthetic records:
+### Scientific Evaluation: comparisons and evidence inspection
 
 ```bash
-python main.py agent "synthetic scholarly network examples" \
-  --planner deterministic --corpus tests/fixtures/synthetic-corpus \
-  --max-actions 3 --max-rounds 3 --max-api-requests 1
+OPENALEX_DASHBOARD_PORT=8511 ./launch-dashboard.sh
 ```
 
-A complete mocked-provider demonstration:
+Open **http://127.0.0.1:8511**. The five workspaces are **Scientific Evaluation**, **Individual research**, **Experiment Dashboard**, **Long-Horizon Testing** and **Saved Experiments**. Views include architecture comparisons, timelines, actual graph/context inputs, paper rankings and provenance. The forest/sage/tan/cream theme supports light and dark modes.
+
+Scientific Evaluation reads saved results; it does not launch inference. The checkout starts without private saved experiments. To create a local **synthetic engineering demonstration**, open Experiment Dashboard, choose **Diagnostics**, keep the deterministic planner and click **Run Comparison**. This is mocked/scripted correctness data, not a hosted model result or scientific quality judgment. It can then be inspected through saved-result views. Other execution controls retain their review/approval gates.
+
+See [UI guide](docs/UI_GUIDE.md). The two interfaces share the current implementation; older benchmark behavior is isolated separately rather than silently merged.
+
+## Primary architecture comparison
+
+|Method|Graph-derived state|Working context|Role|
+|---|---|---|---|
+|`standard`|No hosted graph intervention|No hosted model|Single-pass deterministic reference; no factual synthesis requirement|
+|`llm`|Off|Conventional bounded context|Hosted scholarly actions and permitted recovery|
+|`llm_graph`|On|Conventional bounded context|Adds graph-derived planner information|
+|`clm`|Off|Model-editable bounded text|CLM-inspired editing, archival and recovery|
+|`clm_graph`|On|Model-editable bounded text|Combines both interventions|
+
+The four hosted cells form a 2×2 design; standard is an external reference with a different work/output obligation. Shared ceilings do not guarantee equal actual evidence exposure or compute. Simple UI aliases are `conventional`, `graph`, `clm`, `combined`.
+
+`meta_clm` and `meta_clm_graph` retain the official conversation renderer/parser/synchronizer integration as **exploratory** configurations. They are excluded from the primary five-method claims. See [seven-method compatibility](docs/SEVEN_ARCHITECTURES.md) and [CLM details](docs/CLM_IMPLEMENTATION.md).
+
+Canonical OpenAlex IDs prevent duplicate paper identities. Retrieved publications and unresolved citation targets are distinct; directed citations derive from source metadata. A stored graph, a selected graph record, a delivered payload and causal model reliance are separate claims. Quotes/source IDs provide traceability, not independent scientific verification.
+
+## CLI and offline examples
+
+Inspect the profile without network or inference:
 
 ```bash
-python -m openalex_agent.agent_demo --output data/examples/agent-demo
+.venv/bin/python -m openalex_agent.live_cli 'How do iterative retrieval and graph retrieval differ?' --dry-run
 ```
 
-A five-method engineering sweep using only public synthetic inputs:
+A deterministic run over39 small authentic historical metadata records:
 
 ```bash
-python main.py benchmark --suite controlled-five \
-  --corpus tests/fixtures/synthetic-corpus \
-  --questions benchmarks/example_questions.json \
-  --planner deterministic --allow-deterministic \
-  --methods standard llm llm_graph clm clm_graph \
-  --action-budgets 3 --trials 1 --trial-seeds 0 \
-  --max-rounds 3 --max-inspected 12 --page-size 2 --max-api-requests 1 \
-  --max-llm-calls 5 --max-total-tokens 70000 \
-  --active-context-tokens 4096 --input-tokens 8192 \
-  --output data/examples/five-method-smoke
+.venv/bin/python -m openalex_agent.live_cli \
+  'How can citation networks support scholarly literature discovery?' \
+  --planner deterministic --snapshot tests/fixtures/development-corpus --output data/evidence-digest.md
 ```
 
-Use fresh output directories. A positive request ceiling is required by the
-existing controller, but fixed-corpus runs make no live OpenAlex requests.
-Deterministic agents are engineering policies, not LLM-quality baselines.
-For graph/context mechanisms and pressure:
+This emits an evidence digest, not an LLM answer or new scientific finding. The separately retained `tests/fixtures/synthetic-corpus` and generic `benchmarks/example_*.json` are synthetic examples. `benchmarks/live_submission_v1/questions.json` is a fixed, development-only question/target manifest required by the live runner and tests; it is not a sealed held-out set or human relevance annotation.
+
+The scripted end-to-end mechanism exercise also uses MockTransport and labels its output:
 
 ```bash
-python -m openalex_agent.controlled_diagnostics --output data/examples/diagnostics
-python -m openalex_agent.context_pressure --condition low --output data/examples/pressure
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=integration/offline_guard:. \
+  .venv/bin/python scripts/exercise_submission_offline.py
 ```
 
-Actual live search is separate and requires your own configuration:
+Its saved-run artifacts stay under ignored `data/`; its generated receipt under `docs/submission/` is also ignored. Both are engineering diagnostics. The script's nested output location is not automatically the top-level UI's saved-run list. For an in-UI offline example use Diagnostics above.
+
+## Limits and accounting
+
+The current Live Research profile defaults to18 actions/rounds,144 admitted records,40 metadata attempts,28 all-stage hosted calls,150,000 total tokens,24,000 payload characters,600 seconds and a$1.50 individual inference ceiling. Advanced Settings can raise the visible time/spending selections to1,800 seconds/$20. These are editable per-run limits, not a cumulative experiment authorization or a quality guarantee.
+
+Durable request reservations precede hosted transmission. Unaccountable/interrupted usage retains holds and blocks further paid inference; duplicate request keys are not replayed. A bounded content revision is distinct from retrying a failed HTTP request. OpenAlex has its own request/observed-cost guards; missing monetary reports remain unknown, and observed cost is not a prepaid hard cap. Authentication, quota, service failures and partial answers remain visible.
+
+Pricing in `.env.example` records the source's conservative development profile. No free-credit eligibility, current account rate or live key access is assumed. [Configuration](docs/CONFIGURATION.md) explains the supported variables and optional Gemini backend.
+
+## V2/V3 and Revision7 research implementation
+
+Useful frozen benchmark functionality is preserved under **[versions/revision7](versions/revision7/README.md)**: actual directed graph-boundary accounting, item-level null abstentions, required-final classification, acquisition/inspection separation, progressive exposure measurement and atomic detached worker/accounting infrastructure. Its runtime contains the earlier V2 graph machinery.
+
+This package has its own `openalex_agent` namespace and historical policies. Run its synthetic tests in its directory/in a separate Python process. Do not install both versions into one editable environment or replace current application modules with frozen ones. No approvals, live ledgers, full corpus, private case/gold files or original hosted traces are released. A full scientific rerun is therefore not claimed.
+
+The optional [legacy progress monitor](tools/legacy-monitor/README.md) supports the historical 900-cell schema without provider calls; it is not a universal R7 monitor.
+
+[Iteration decisions](docs/ITERATIONS.md) explains what was retained, superseded or left private. Git history preserves the earlier public release. Frozen source hashes identify benchmark code independently from the current app.
+
+## Testing, reproducibility and publication
 
 ```bash
-python main.py search "academic literature retrieval" --limit 5
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=integration/offline_guard:. \
+  .venv/bin/python -m pytest -p no:cacheprovider
+./scripts/test-revision7-offline.sh
+.venv/bin/python scripts/repository_audit.py
+.venv/bin/python scripts/verify_manifest.py
 ```
 
-See [reproducibility](docs/REPRODUCIBILITY.md) for manifests, scoring and artifact
-handling, and `python main.py --help` for the complete CLI.
+Root and frozen tests use synthetic/mocked providers; the inherited offline guard blocks real IP connections. These tests validate software contracts, not scholarly effectiveness. The optional Gemini SDK has separate dependencies; related tests may skip when it is absent. CI declares Python 3.11/3.14, but only the locally executed environment is reported as passed until CI runs.
 
-## Scientific limitations
+[Observed validation](docs/VALIDATION.md), [reproducibility](docs/REPRODUCIBILITY.md), [evaluation policy](docs/EVALUATION.md), [five-method development collection](docs/FIVE_METHOD_DEVELOPMENT.md) and [pooled review](docs/POOLED_RELEVANCE_PROTOCOL.md) describe versioning and independent judgments. Relevance grades remain0–2. Missing judgments stay NOT EVALUATED; final held-out and paid collection require their existing explicit approvals. No approvals or human annotations are fabricated or shipped.
 
-The `clm`/`clm_graph` methods are CLM-inspired context-as-a-file adaptations, not a trained memory model
-or a reproduction of a published training/evaluation harness. It provides bounded
-JSON text edits and observation recovery, not arbitrary shell access, hidden
-reasoning, native provider-context control or compute-cache reuse.
+`PUBLIC_MANIFEST.json` records the prepared source inventory; manifests and Git commits must both identify later experiments. Source hashes change with this update; historical runs retain their original identities. [PUBLISHING.md](PUBLISHING.md) provides the reviewed commit/push procedure. This preparation does not commit or publish automatically.
 
-Scripted retention/correction outcomes validate mechanisms only. Lexical ranking
-can miss terminology; citation expansion can drift; abstracts may not support a
-claim; valid JSON does not ensure a good decision. Study-token counts are
-separate from provider billing tokens. Hosted responses may vary even with the
-same inputs. Resource ceilings do not guarantee exact provider invoices.
+## Data, credentials and licenses
 
-Independent relevance judgments, verified factual support, repeated trials and a
-frozen held-out protocol are required before drawing comparative conclusions.
-Future studies may show no improvement or regressions. No independent human
-judgments or empirical results have been invented for this release.
+Only small fixture metadata, development/example inputs and an aggregate, qualified research-status summary are included. No30k corpus, private grading key/package, live ledger, held-out questions, human annotations, workstation state or raw hosted transcripts are included. Internal milestone/audit documents are distilled into public technical/version/limitations documentation rather than copied wholesale.
 
-## Release contents
-
-Technical design: [algorithms](docs/ALGORITHMS.md), [graph](docs/GRAPH_DESIGN.md),
-[CLM adaptation](docs/CLM_IMPLEMENTATION.md), [evaluation](docs/EVALUATION.md).
-The included tests cover core retrieval, graph correctness, planning, controlled
-comparisons, evidence accounting and Streamlit rendering. Provider validation utilities are included, but historical experiments, their
-private inputs, approval receipts and outputs are not distributed.
-
-Internal milestones, drafts, audits, unpublished evaluation questions, private
-annotations, local data, API keys and Git history are excluded. Generated outputs
-belong under ignored `data/`. Run `python scripts/repository_audit.py` before
-staging; `--staged` checks exact index blobs. See
-[PUBLISHING.md](PUBLISHING.md) for commands; this update performs no commit or publication automatically.
-
-`PUBLIC_MANIFEST.json` identifies included files and hashes. The complete private
-selection/exclusion review is stored separately, outside this export. The
-packaged tokenizer retains its upstream MIT license. A project-wide code license
-and author/citation metadata remain owner decisions; none has been invented.
+Vendored Meta components retain CC BY-NC4.0, their NOTICE and pinned provenance. Tokenizer assets retain their upstream license. No new blanket project license or research-performance endorsement is inferred from this release.

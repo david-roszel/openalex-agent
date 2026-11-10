@@ -1,0 +1,239 @@
+{
+  "version": "live-submission-questions-v1",
+  "selection": "Eight fixed domains and canonical literature comparisons, chosen before any new comparative trajectories; no outcome-based inclusion or exclusion. Targets are publication identities, not independent general relevance judgments.",
+  "target_rule": "Exact canonical DOI, or exact normalized title with the predefined publication year; canonical OpenAlex ID when independently resolved before execution. No fuzzy matching or outcome-based label additions.",
+  "openalex_target_resolution": "PENDING: execution environment cannot reach the OpenAlex API; DOI/title identities remain fixed.",
+  "questions": [
+    {
+      "id": "Q01",
+      "domain": "NLP",
+      "question": "How did retrieval-augmented generation develop from single-step retrieval toward multi-step reasoning? Compare the original RAG formulation with IRCoT, explain when iterative retrieval helps, and identify evidence-preservation limitations.",
+      "baseline_query": "retrieval augmented generation iterative multi step reasoning IRCoT",
+      "required_components": [
+        "original RAG formulation",
+        "iterative retrieval and reasoning",
+        "comparison supported by multiple papers",
+        "limitations and evidence preservation"
+      ],
+      "targets": [
+        {
+          "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+          "doi": "10.48550/arxiv.2005.11401",
+          "identity_source": "https://arxiv.org/abs/2005.11401",
+          "openalex_id": null,
+          "year": 2020
+        },
+        {
+          "title": "Interleaving Retrieval with Chain-of-Thought Reasoning for Knowledge-Intensive Multi-Step Questions",
+          "doi": "10.18653/v1/2023.acl-long.557",
+          "identity_source": "https://aclanthology.org/2023.acl-long.557/",
+          "openalex_id": null,
+          "year": 2023
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "domain": "Machine learning",
+      "question": "Compare recurrent sequence modelling using LSTMs with the Transformer approach. Identify foundational publications, explain the architectural differences and reported empirical findings, and distinguish computational advantages from remaining limitations.",
+      "baseline_query": "long short term memory attention transformer sequence modelling",
+      "required_components": [
+        "foundational publications",
+        "recurrent and attention architectures",
+        "empirical findings",
+        "computational tradeoffs and limitations"
+      ],
+      "targets": [
+        {
+          "title": "Long Short-Term Memory",
+          "doi": "10.1162/neco.1997.9.8.1735",
+          "identity_source": "https://direct.mit.edu/neco/article/9/8/1735/6109/Long-Short-Term-Memory",
+          "openalex_id": null,
+          "year": 1997
+        },
+        {
+          "title": "Attention Is All You Need",
+          "doi": "10.48550/arxiv.1706.03762",
+          "identity_source": "https://arxiv.org/abs/1706.03762",
+          "openalex_id": null,
+          "year": 2017
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "domain": "Genome editing",
+      "question": "Investigate the methodological development from programmable CRISPR-Cas9 DNA cleavage to cytosine base editing. Compare mechanisms, supported capabilities and important limitations using primary research publications.",
+      "baseline_query": "CRISPR Cas9 programmable DNA cleavage cytosine base editing",
+      "required_components": [
+        "programmable cleavage foundation",
+        "base editing development",
+        "mechanism comparison",
+        "capabilities and limitations"
+      ],
+      "targets": [
+        {
+          "title": "A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity",
+          "doi": "10.1126/science.1225829",
+          "identity_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6286148/",
+          "openalex_id": null,
+          "year": 2012
+        },
+        {
+          "title": "Programmable editing of a target base in genomic DNA without double-stranded DNA cleavage",
+          "doi": "10.1038/nature17946",
+          "identity_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4873371/",
+          "openalex_id": null,
+          "year": 2016
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "domain": "Clinical research",
+      "question": "Compare the SPRINT and ACCORD blood-pressure trials as research evidence. Explain their populations, interventions, reported outcomes and limitations of comparing the findings. This is a methodological literature comparison, not patient-specific medical advice.",
+      "baseline_query": "SPRINT ACCORD intensive standard blood pressure randomized trial",
+      "required_components": [
+        "trial populations and designs",
+        "interventions and reported outcomes",
+        "cross-trial comparison",
+        "generalizability and uncertainty"
+      ],
+      "targets": [
+        {
+          "title": "A Randomized Trial of Intensive versus Standard Blood-Pressure Control",
+          "doi": "10.1056/nejmoa1511939",
+          "identity_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4689591/",
+          "openalex_id": null,
+          "year": 2015
+        },
+        {
+          "title": "Effects of Intensive Blood-Pressure Control in Type 2 Diabetes Mellitus",
+          "doi": "10.1056/nejmoa1001286",
+          "identity_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4123215/",
+          "openalex_id": null,
+          "year": 2010
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "domain": "Ecology",
+      "question": "How has research estimated the effects of climate change on biodiversity and extinction risk? Compare influential modelling and synthesis approaches, describe their assumptions, and explain the major uncertainties.",
+      "baseline_query": "climate change biodiversity extinction risk modelling uncertainty",
+      "required_components": [
+        "influential publications",
+        "modelling and synthesis methods",
+        "assumptions",
+        "uncertainty and limitations"
+      ],
+      "targets": [
+        {
+          "title": "Extinction risk from climate change",
+          "doi": "10.1038/nature02121",
+          "identity_source": "https://www.nature.com/articles/nature02121",
+          "openalex_id": null,
+          "year": 2004
+        },
+        {
+          "title": "Accelerating extinction risk from climate change",
+          "doi": "10.1126/science.aaa4984",
+          "identity_source": "https://pubmed.ncbi.nlm.nih.gov/25931559/",
+          "openalex_id": null,
+          "year": 2015
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "domain": "Energy materials",
+      "question": "Trace the early development of efficient solid-state perovskite solar cells. Compare primary device research with early synthesis literature, identify the main methodological contributions, and explain stability and commercialization limitations.",
+      "baseline_query": "perovskite solar cells meso superstructured emergence stability",
+      "required_components": [
+        "early primary device research",
+        "development synthesis",
+        "methodological contributions",
+        "stability and commercialization limitations"
+      ],
+      "targets": [
+        {
+          "title": "Efficient Hybrid Solar Cells Based on Meso-Superstructured Organometal Halide Perovskites",
+          "doi": "10.1126/science.1228604",
+          "identity_source": "https://www.science.org/doi/10.1126/science.1228604",
+          "openalex_id": null,
+          "year": 2012
+        },
+        {
+          "title": "The emergence of perovskite solar cells",
+          "doi": "10.1038/nphoton.2014.134",
+          "identity_source": "https://www.nature.com/articles/nphoton.2014.134",
+          "openalex_id": null,
+          "year": 2014
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "domain": "Quantum computing",
+      "question": "How do surface codes support fault-tolerant quantum computing, and what experimental evidence shows the effects of scaling a logical qubit? Connect foundational work to later experiments and distinguish demonstrated results from engineering requirements.",
+      "baseline_query": "surface codes quantum error correction scaling logical qubit",
+      "required_components": [
+        "surface-code foundations",
+        "later scaling experiments",
+        "evidence connecting the approaches",
+        "demonstrations versus remaining requirements"
+      ],
+      "targets": [
+        {
+          "title": "Surface codes: Towards practical large-scale quantum computation",
+          "doi": "10.1103/physreva.86.032324",
+          "identity_source": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.86.032324",
+          "openalex_id": null,
+          "year": 2012
+        },
+        {
+          "title": "Suppressing quantum errors by scaling a surface code logical qubit",
+          "doi": "10.1038/s41586-022-05434-1",
+          "identity_source": "https://www.nature.com/articles/s41586-022-05434-1",
+          "openalex_id": null,
+          "year": 2023
+        }
+      ]
+    },
+    {
+      "id": "Q08",
+      "domain": "Social networks",
+      "question": "Compare weak-tie theory with structural-hole theory as explanations of information access and innovation in social networks. Identify foundational evidence, clarify where the explanations overlap or differ, and discuss limitations of the evidence.",
+      "baseline_query": "strength weak ties structural holes good ideas information networks",
+      "required_components": [
+        "foundational weak-tie evidence",
+        "structural-hole evidence",
+        "comparison and overlap",
+        "evidence limitations"
+      ],
+      "targets": [
+        {
+          "title": "The Strength of Weak Ties",
+          "doi": "10.1086/225469",
+          "identity_source": "https://www.journals.uchicago.edu/doi/10.1086/225469",
+          "openalex_id": null,
+          "year": 1973
+        },
+        {
+          "title": "Structural Holes and Good Ideas",
+          "doi": "10.1086/421787",
+          "identity_source": "https://www.journals.uchicago.edu/doi/10.1086/421787",
+          "openalex_id": null,
+          "year": 2004
+        }
+      ]
+    }
+  ],
+  "pre_freeze_identity_corrections": [
+    {
+      "question": "Q05",
+      "rejected_doi": "10.1126/science.1237173",
+      "reason": "Bibliographic identity could not be verified; replaced with the verified Urban 2015 synthesis before any comparative execution. No performance outcome was consulted."
+    }
+  ]
+}

@@ -89,7 +89,7 @@ def test_corrupt_database_produces_actionable_error(monkeypatch, tmp_path, capsy
 
 
 def test_invalid_environment_configuration_has_no_traceback_or_raw_value(monkeypatch, tmp_path, capsys):
-    monkeypatch.setattr("openalex_agent.config.load_dotenv", lambda: None)
+    monkeypatch.setattr("openalex_agent.config.load_dotenv", lambda *args, **kwargs: None)
     monkeypatch.setenv("OPENALEX_MAX_REQUESTS", "DO-NOT-ECHO-THIS-VALUE")
     with pytest.raises(SystemExit) as exited:
         invoke(monkeypatch, tmp_path / "test.sqlite", "search", "test")

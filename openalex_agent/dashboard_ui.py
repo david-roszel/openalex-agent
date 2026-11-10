@@ -9,6 +9,7 @@ import hashlib
 
 import pandas as pd
 import streamlit as st
+from .ui_theme import METHOD_COLORS, method_colors, chart_style
 
 from .context_planner import InferenceLimits
 from .controller import Budget
@@ -28,7 +29,7 @@ def catalog(root):
     for p in (root/"data").glob("*/corpus/manifest.json"):
         if (p.parent/"papers.jsonl").is_file():corpora.append(str(p.parent.relative_to(root)))
     files=[]
-    for parent in (root/"benchmarks",root/"data/study",root/"data/review"):
+    for parent in (root/"benchmarks",root/"data/study",root/"data/prepilot-development-v1"):
         if parent.exists():files.extend(str(p.relative_to(root)) for p in parent.glob("*.json"))
     return sorted(set(corpora)),sorted(set(files)),saved_experiments(root)
 
@@ -58,8 +59,8 @@ def context_compare(directories,root,secrets,prefix):
             if not records["requests"]:st.info("No observable inference snapshots.");continue
             series=pd.DataFrame([{k:r[k] for k in ("call","active_chars","active_tokens","full_input_tokens")} for r in records["requests"]]).set_index("call")
             st.caption("Actual request sizes. Missing token counts are not reconstructed as provider usage.")
-            st.line_chart(series[["active_chars"]].reset_index(),x="call",y="active_chars")
-            if series.active_tokens.notna().any():st.line_chart(series[["active_tokens","full_input_tokens"]].reset_index(),x="call",y=["active_tokens","full_input_tokens"])
+            st.line_chart(series[["active_chars"]].reset_index(),x="call",y="active_chars",color=method_colors().get(name.split(' · ')[0],'#244B3B'))
+            if series.active_tokens.notna().any():st.line_chart(series[["active_tokens","full_input_tokens"]].reset_index(),x="call",y=["active_tokens","full_input_tokens"],color=[method_colors()['llm'],method_colors()['clm']])
             st.dataframe([{k:r[k] for k in ("call","recorded_quotes_in_active","recorded_quotes_in_recovery")} for r in records["requests"]],hide_index=True)
             st.caption("Exact text from recorded output quotations only; presence does not establish semantic support or hidden model knowledge.")
             call=st.select_slider("Recorded call",options=[r["call"] for r in records["requests"]],key=prefix+"context-call-"+name)
@@ -106,7 +107,12 @@ def render_saved(directory,root,secrets=()):
                 values=chart.assign(value=pd.to_numeric(chart[column],errors="coerce")).dropna(subset=["value"])
                 bars=values.groupby(["method","variant","action_budget"]).value.mean().reset_index()
                 bars["configuration"]=bars.apply(lambda r:f"{r['method']}/{r['variant']}/budget={r['action_budget']}",axis=1)
-                st.bar_chart(bars,x="configuration",y="value")
+                import altair as alt
+                plot=alt.Chart(bars).mark_bar(cornerRadiusEnd=3).encode(x=alt.X('configuration:N',title=None),
+                    y=alt.Y('value:Q',title=metric),color=alt.Color('method:N',
+                    scale=alt.Scale(domain=list(method_colors()),range=list(method_colors().values()))),
+                    tooltip=['configuration:N','value:Q'])
+                st.altair_chart(chart_style(plot),width='stretch')
                 st.caption("Descriptive means over selected recorded questions/trials. Coverage, failures and raw rows remain visible; no significance claim.")
                 with st.expander("Existing paired contrasts and graph × CLM interaction"):
                     if loaded["manifest"].get("status")=="complete":
@@ -138,7 +144,7 @@ def render_saved(directory,root,secrets=()):
             st.dataframe(_table([{k:r.get(k) for k in pressure_fields} for r in loaded["pressure"]]),hide_index=True)
             if valid:
                 bars=pd.DataFrame(valid).groupby("architecture")[["total_observation_tokens_encountered","max_active_context_tokens"]].mean().reset_index()
-                st.bar_chart(bars,x="architecture",y=["total_observation_tokens_encountered","max_active_context_tokens"])
+                st.bar_chart(bars,x="architecture",y=["total_observation_tokens_encountered","max_active_context_tokens"],color=['#657A3F','#A7794C'])
                 st.caption("Only validated diagnostic conditions appear in this chart. Exact recovery concerns the initial probe; unattempted recovery is NOT EVALUATED and correction accuracy is separate.")
             st.download_button("Export pressure records and source paths",json.dumps(redact(loaded["pressure"],secrets),indent=2),file_name="pressure-records.json",mime="application/json",key=prefix+"pressure")
         if loaded["diagnostics"]:st.json(redact(loaded["diagnostics"],secrets))
@@ -233,7 +239,7 @@ def main(page,settings,root):
         questions=pick_file("Research question set",files,key="comparison-questions",disabled=running or category=="Diagnostics")
         factual=pick_file("Public factual probes (no answers)",files,key="comparison-facts",disabled=running or category=="Diagnostics")
         labels=pick_file("Independent relevance labels",files,key="comparison-labels",disabled=running or category=="Diagnostics")
-        review=st.selectbox("Reviewed annotation bundle",["Not selected",*sorted(str(p.parent.relative_to(root)) for p in (root/"data").glob("*/review-manifest.json"))],disabled=running or category=="Diagnostics")
+        review=st.selectbox("Reviewed annotation bundle",["Not selected","data/prepilot-development-v1"],disabled=running or category=="Diagnostics")
         approval=pick_file("Pinned coordinator approval",files,key="comparison-approval",disabled=running or category=="Diagnostics")
     a,b,c=st.columns(3)
     actions=int(a.number_input("Actions per method",1,100,3,disabled=running or kind=="Long-horizon pressure"));trials=int(b.number_input("Repeated trials",1,20,1,disabled=running))

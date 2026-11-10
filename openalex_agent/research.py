@@ -10,20 +10,25 @@ from dataclasses import asdict, dataclass, field, replace
 import json
 from pathlib import Path
 import threading
+import time
+import math
 from urllib.parse import urlsplit
 import uuid
 
 from .config import Settings
-from .controller import Budget, Controller
-from .context_planner import ContextPlanner, EngineeringContextModel, InferenceLimits
-from .controlled import ControlledController
+from .controller import Budget
+from .context_planner import EngineeringContextModel, InferenceLimits
 from .corpus import LocalCorpus, atomic_json
 from .freeze_pilot import verify
 from .graph import ScholarlyGraph
-from .llm import DeterministicPlanner, HostedJSONPlanner
+from .llm import DeterministicPlanner
 from .models import canonical_id, utcnow
 from .selection import Scoring
 from .storage import Database
+from .live_research import (LiveController, LiveControlledController, LiveContextPlanner,
+                            LiveHostedPlanner, finish_research, VERSION as LIVE_POLICY_VERSION)
+from .live_safety import diagnostic, SpendingLedger
+from .live_profiles import priced_settings
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -53,6 +58,12 @@ class ResearchConfig:
     context_management: str = "conventional"
     controlled: bool = False
     inference_limits: InferenceLimits = field(default_factory=InferenceLimits)
+    # Existing programmatic callers retain retrieval-only behavior. The UI
+    # explicitly enables synthesis and reserves a call inside its chosen cap.
+    final_synthesis: bool = False
+    quality_aware: bool = False
+    synthesis_revisions: int = 0
+    max_seconds: float = 600.0
 
     def __post_init__(self):
         if not isinstance(self.question, str) or not 1 <= len(self.question.strip()) <= 1000:
@@ -71,6 +82,14 @@ class ResearchConfig:
             raise ValueError("CLM requires the matched six-tool research policy")
         if not isinstance(self.inference_limits, InferenceLimits):
             raise ValueError("Invalid inference resource limits")
+        if type(self.final_synthesis) is not bool:
+            raise ValueError("Invalid synthesis policy")
+        if type(self.quality_aware) is not bool or type(self.synthesis_revisions) is not int or self.synthesis_revisions not in (0, 1):
+            raise ValueError("Invalid quality/revision policy")
+        if type(self.max_seconds) not in (int, float) or not math.isfinite(self.max_seconds) or self.max_seconds <= 0:
+            raise ValueError("Research time limit must be finite and positive")
+        if self.final_synthesis and self.budget.max_llm_calls < 1 + self.synthesis_revisions:
+            raise ValueError("The call ceiling must leave room for synthesis and its revision")
 
 
 class ResearchJob:
@@ -124,15 +143,12 @@ class ObservedDatabase(Database):
 
 def pilot_reference(root: Path) -> tuple[set[str] | None, dict]:
     """Use only the verified, byte-preserved corpus as the comparison baseline."""
-    receipt_path = root / "data/reference/receipt.json"
+    receipt_path = root / "benchmarks/frozen_pilot_v1.json"
     try:
         receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
         receipt["snapshot"] = str(root / receipt["snapshot"])
         verify(receipt)
-        corpus_path = (Path(receipt["snapshot"]) / receipt["corpus_relative"]).resolve()
-        if not corpus_path.is_relative_to(Path(receipt["snapshot"]).resolve()):
-            raise ValueError("Reference corpus escapes the verified snapshot")
-        corpus = LocalCorpus(corpus_path)
+        corpus = LocalCorpus(Path(receipt["snapshot"]) / "evidence/graph-ablation-pilot-2026-11-02/corpus")
         return set(corpus.by_id), {"performed": False, "baseline_available": True, "baseline_papers": len(corpus.by_id),
             "corpus_sha256": corpus.fingerprint, "snapshot_manifest_sha256": receipt["manifest_sha256"]}
     except (OSError, ValueError, KeyError, TypeError):
@@ -150,12 +166,22 @@ def compare_ids(ids, baseline: set[str] | None, record: dict) -> dict:
 
 
 def start_research(config: ResearchConfig, settings: Settings, *, root: Path = PROJECT_ROOT,
-                   openalex_transport=None, planner_transport=None) -> ResearchJob:
+                   openalex_transport=None, planner_transport=None, spending_ledger=None, trajectory_id=None) -> ResearchJob:
     """Start one isolated run. Transports are injectable for offline integration tests."""
+    settings = priced_settings(settings)
     secrets = tuple(v for v in (settings.api_key, settings.llm_api_key, settings.email) if v)
     if any(secret in config.question for secret in secrets):
         raise ValueError("Remove configured credentials or contact details from the research question")
     settings.validate_retrieval()
+    if config.planner == "hosted":
+        missing = [name for name, value in (("LLM_BASE_URL", settings.llm_base_url),
+            ("LLM_API_KEY", settings.llm_api_key), ("LLM_MODEL", settings.llm_model)) if not value.strip()]
+        if missing:
+            raise ValueError("Missing hosted configuration: " + ", ".join(missing) + ". Set these in the project's .env file.")
+        if config.inference_limits.max_llm_cost_usd is not None and not (
+                settings.llm_input_price > 0 and settings.llm_output_price > 0):
+            raise ValueError("Dollar limits require LLM_INPUT_USD_PER_MILLION and LLM_OUTPUT_USD_PER_MILLION above zero. "
+                             "Zero means unconfigured pricing, not free inference.")
     if config.mode == "live" and settings.max_requests == 0:
         raise ValueError("OPENALEX_MAX_REQUESTS is zero; live retrieval is unavailable")
     root = Path(root).resolve()
@@ -168,12 +194,19 @@ def start_research(config: ResearchConfig, settings: Settings, *, root: Path = P
     # A fresh per-run database cannot read a benchmark's cache or write to its files.
     effective = replace(settings, database=str(directory / "metadata.sqlite"),
                         max_requests=min(settings.max_requests, config.budget.max_api_requests))
+    if config.quality_aware:
+        effective = replace(effective, max_retries=0)
     job = ResearchJob(directory, config)
+    job.spending_ledger = spending_ledger
+    job.trajectory_id = trajectory_id or directory.name
     from .git_provenance import git_provenance
     request = {"schema": 1, "created_at": utcnow(), "git": git_provenance(root), "configuration": asdict(config),
+               "live_policy_version": LIVE_POLICY_VERSION,
                "effective_api_request_limit": effective.max_requests,
                "configured_api_cost_ceiling_usd": effective.max_cost_usd,
                "planner_model": effective.llm_model if config.planner == "hosted" else "none"}
+    request["pricing"] = {"input_upper_bound_per_million": settings.llm_input_price,
+        "output_per_million": settings.llm_output_price, "discount_assumed": False}
     atomic_json(directory / "research.json", redact(request, secrets))
     job._thread = threading.Thread(target=_execute, args=(job, effective, root, secrets,
         openalex_transport, planner_transport), name=f"research-{directory.name}", daemon=True)
@@ -184,7 +217,10 @@ def start_research(config: ResearchConfig, settings: Settings, *, root: Path = P
 def _execute(job, settings, root, secrets, openalex_transport, planner_transport):
     config = job.config
     try:
-        baseline, comparison = pilot_reference(root)
+        # Historical pilot comparison is optional metadata, never a research
+        # dependency. Thorough standalone runs do not open V1/V3 corpora.
+        baseline, comparison = ((None, {"performed": False, "reason": "Independent standalone research"})
+            if config.quality_aware else pilot_reference(root))
         job.update(status="running", comparison=comparison)
         with ExitStack() as stack:
             db = stack.enter_context(ObservedDatabase(settings.database,
@@ -195,33 +231,152 @@ def _execute(job, settings, root, secrets, openalex_transport, planner_transport
             else:
                 from .openalex import OpenAlexClient
                 retriever = stack.enter_context(OpenAlexClient(db, settings, transport=openalex_transport))
-            planner = (stack.enter_context(HostedJSONPlanner(settings, transport=planner_transport))
+            planner = (stack.enter_context(LiveHostedPlanner(settings, transport=planner_transport))
                        if config.planner == "hosted" else DeterministicPlanner())
+            base_planner = planner
             if config.controlled:
                 if planner.name == "deterministic":
                     planner = EngineeringContextModel()
-                planner = ContextPlanner(planner, mode=config.context_management, limits=config.inference_limits)
+                planner = LiveContextPlanner(planner, mode=config.context_management, limits=config.inference_limits)
                 architecture = ("clm" if config.context_management == "clm" else "llm") + ("_graph" if config.graph_memory else "")
-                controller = ControlledController(config.question, retriever, db, architecture=architecture,
+                controller = LiveControlledController(config.question, retriever, db, architecture=architecture,
                     planner=planner, budget=config.budget, scoring=Scoring(), output=str(job.directory / "runs"))
             else:
-                controller = Controller(config.question, retriever, db,
+                controller = LiveController(config.question, retriever, db,
                     method="graph" if config.graph_memory else "iterative", planner=planner,
                     budget=config.budget, scoring=Scoring(), output=str(job.directory / "runs"))
+            controller.final_synthesis = config.final_synthesis
+            controller._redactor = lambda value: redact(value, secrets)
+            controller.quality_aware = config.quality_aware
+            controller.synthesis_revisions = config.synthesis_revisions
+            controller.max_seconds = config.max_seconds
+            controller.research_started = time.monotonic()
+            started = time.perf_counter()
+            controller.synthesis_reserve = 1 + config.synthesis_revisions if config.final_synthesis else 0
+            if isinstance(base_planner, LiveHostedPlanner):
+                base_planner.configure_live(controller, config.inference_limits, config.final_synthesis)
+                if job.spending_ledger is None and config.inference_limits.max_llm_cost_usd is not None:
+                    job.spending_ledger = SpendingLedger(job.directory / "spending.sqlite",
+                        ceiling=config.inference_limits.max_llm_cost_usd, identity=job.directory.name)
+                base_planner.spending_ledger = job.spending_ledger
+                base_planner.trajectory_id = job.trajectory_id
+                if config.quality_aware:
+                    base_planner.analyze_question()
             job.update(run_id=controller.run_id)
             result = controller.run()
+            job.update(phase="synthesis")
+            try:
+                synthesis = finish_research(controller, base_planner, enabled=config.final_synthesis)
+            except Exception as exc:
+                # Keep committed retrieval evidence even if terminal formatting
+                # or an unexpected provider failure interrupts the answer stage.
+                controller._log("live_synthesis_error", {"type": type(exc).__name__})
+                synthesis = {"status": "unavailable", "reason": "unexpected_synthesis_error", "answer": None,
+                    "sources": [], "metadata_admitted": len(controller.papers), "stop_reason": controller.stop_reason}
+            if synthesis is not None:
+                result["synthesis"] = redact(synthesis, secrets)
+                atomic_json(controller.directory / "synthesis.json", result["synthesis"])
+            result["llm_usage"] = asdict(planner.usage)
+            result["live_policy_version"] = LIVE_POLICY_VERSION
+            if config.quality_aware:
+                from .live_quality import coverage_view
+                result["research_plan"] = controller.research_plan
+                result["research_coverage"] = coverage_view(controller)
+            if job.spending_ledger:
+                result["spending"] = job.spending_ledger.summary()
+            result["mechanisms"] = mechanism_metrics(controller, base_planner, db.events(controller.run_id))
+            result["effective_api_request_limit"] = settings.max_requests
+            result["retrieval_seconds"] = result["seconds"]
+            result["seconds"] = time.perf_counter() - started
+            result["local_seconds"] = max(0.0, result["seconds"] - retriever.usage.api_seconds -
+                retriever.usage.wait_seconds - planner.usage.seconds)
+            result["live_accounting"] = {"unique_metadata_admitted": len(controller.papers),
+                "unique_records_returned": len(controller.retrieved_ids),
+                "returned_record_observations": sum(p.get("returned_papers", 0) for p in controller.trace),
+                "sources_sent_to_model": len(getattr(base_planner, "visible_ids", set())),
+                "abstracts_sent_to_model": len(getattr(base_planner, "excerpt_ids", set()))}
+            result["binding_limits"] = binding_limits(result)
+            controller._checkpoint(result["seconds"], finished=True)
+            atomic_json(controller.directory / "result.json", redact(result, secrets))
+            from .live_research import answer_markdown
+            (job.directory / "answer.md").write_text(redact(answer_markdown(result), secrets), encoding="utf-8")
             comparison = compare_ids(result["retrieved_ids"], baseline, comparison)
             status = "failed" if result["stop_reason"] == "retrieval_error" else "completed"
-            error = ({"type": "retrieval_error", "message": "Retrieval failed. Inspect the recorded API and controller errors; partial results may be available."}
+            api_errors = [e for e in db.events(controller.run_id) if e["kind"] == "request_error"]
+            error = ({"type": "retrieval_error", "message": retrieval_error_message(api_errors)}
                      if status == "failed" else None)
             job.update(status=status, result=redact(result, secrets), error=error, comparison=comparison)
     except Exception as exc:
-        # Never forward exception text: transports/configuration can contain keys.
-        job.update(status="failed", error={"type": type(exc).__name__,
-            "message": "Run could not complete. Check the selected corpus, server-side configuration and recorded events."})
+        details = diagnostic(exc, secrets)
+        atomic_json(job.directory / "error.json", details)
+        message = details["message"] if isinstance(exc, (ValueError, FileNotFoundError)) else (
+            f"Research failed ({type(exc).__name__}). A credential-redacted traceback was saved to error.json.")
+        job.update(status="failed", error={"type": type(exc).__name__, "message": message,
+                                          "diagnostic": "error.json"})
     finally:
         state = job.snapshot()
         atomic_json(job.directory / "summary.json", {k: v for k, v in state.items() if k != "events"})
+
+
+def retrieval_error_message(events):
+    status = next((e.get("status") for e in reversed(events) if e.get("status")), None)
+    if status in (401, 403):
+        return "Retrieval failed: OpenAlex rejected access. Check OPENALEX_API_KEY in this project's .env file and the account's API access."
+    if status == 429:
+        return "OpenAlex rate limit reached. The partial research artifacts are saved; try again after the service resets."
+    if status:
+        return f"Retrieval failed: OpenAlex returned HTTP {status}. Partial research artifacts are saved."
+    return "Retrieval failed: unable to connect to OpenAlex. Check network access, DNS/proxy settings and OPENALEX_REQUEST_TIMEOUT. Partial artifacts are saved."
+
+
+def mechanism_metrics(controller, base, events):
+    edits = [e for e in events if e["kind"] == "context_edit" and e.get("source") == "model"]
+    recoveries = [e for e in events if e["kind"] == "context_recovery"]
+    inputs = getattr(base, "wire_payloads", [])
+    later_edits = 0
+    for edit in edits:
+        call = (edit.get("usage") or {}).get("call_index", 0)
+        after = edit.get("after", "")
+        if edit.get("committed") and edit.get("applied") and after and any(
+                p["call"] > call and after in p["input"].get("active_context", "") for p in inputs):
+            later_edits += 1
+    later_recoveries = 0
+    for recovery in recoveries:
+        request = recovery.get("request") or {}
+        call = (recovery.get("usage") or {}).get("call_index", 0)
+        if recovery.get("accepted") and any(p["call"] > call and
+                p["input"].get("recovered_observation", {}).get("index") == request.get("index") and
+                p["input"].get("recovered_observation", {}).get("start") == request.get("start") and
+                bool(p["input"].get("recovered_observation", {}).get("text")) for p in inputs):
+            later_recoveries += 1
+    return {"graph_edges_stored": controller.graph.citation_graph().number_of_edges() if controller.graph else 0,
+        "graph_unique_edges_sent": len(getattr(base, "graph_pairs", set())),
+        "successful_followup_planning_calls": sum(p["stage"] == "planning" and p.get("successful", False) for p in inputs),
+        "graph_edges_in_successful_planning": len({tuple(pair) for p in inputs
+            if p["stage"] == "planning" and p.get("successful") for pair in p.get("graph_edge_pairs", [])}),
+        "environment_context_updates": sum(e["kind"] == "context_observation" and e.get("source") != "model" for e in events),
+        "clm_edits_proposed": len(edits), "clm_edits_accepted": sum(e.get("accepted") is True for e in edits),
+        "clm_edits_committed": sum(bool(e.get("committed") and e.get("applied")) for e in edits),
+        "committed_edits_in_later_requests": later_edits,
+        "archive_observations": len(getattr(getattr(controller.planner, "store", None), "observations", [])),
+        "recovery_operations": len(recoveries), "accepted_recoveries": sum(e.get("accepted") is True for e in recoveries),
+        "recovered_evidence_in_later_requests": later_recoveries,
+        "context_local_seconds": getattr(controller.planner, "context_local_seconds", 0),
+        "interpretation": "Mechanism exposure and persistence; not evidence of improved research quality"}
+
+
+def binding_limits(result: dict) -> list[str]:
+    """All reached limits, in addition to the controller's first stop reason."""
+    budget = dict(result.get("budget", {}))
+    if "effective_api_request_limit" in result and "max_api_requests" in budget:
+        budget["max_api_requests"] = min(budget["max_api_requests"], result["effective_api_request_limit"])
+    counts = {"max_actions": result.get("actions", 0), "max_rounds": result.get("rounds", 0),
+        "max_inspected": len(result.get("inspected_ids", [])),
+        "max_api_requests": (result.get("api_usage") or {}).get("requests", 0),
+        "max_llm_calls": (result.get("llm_usage") or {}).get("calls", 0)}
+    if (result.get("retrieval") or {}).get("live_openalex_available") is False:
+        counts.pop("max_api_requests")
+    return [key for key, used in counts.items() if key in budget and used >= budget[key]]
 
 
 def progress(state: dict) -> dict:
@@ -249,12 +404,34 @@ def progress(state: dict) -> dict:
         evidence = "Only cache reuse is recorded; live HTTP retrieval has not been verified."
     else:
         evidence = "Live mode selected; no successful OpenAlex HTTP response is recorded yet."
-    call_events = [e for e in events if e["kind"] == "context_model_call"] or [e for e in events if e["kind"] == "planner_call"]
+    call_events = ([e for e in events if e["kind"] == "live_model_call"] or
+                   [e for e in events if e["kind"] == "context_model_call"] or [e for e in events if e["kind"] == "planner_call"])
     usage_llm = result.get("llm_usage") or {}
+    inputs = [e for e in events if e["kind"] == "live_model_input"]
+    sources = {pid for e in inputs for pid in e.get("source_ids", [])}
+    # Legacy saved runs contain the exact conventional planning context; count
+    # those excerpts without pretending that every retrieved record was sent.
+    if not inputs:
+        sources = {p["id"] for e in events if e["kind"] == "context" for p in e.get("context", {}).get("top_papers", [])}
+    source_count = len(sources)
+    recorded_planner = result.get("planner") or next((e.get("planner") for e in events if e["kind"] == "start"), None)
+    if recorded_planner == "deterministic":
+        source_count = 0
+    elif not inputs and any(e["kind"] == "context_model_call" for e in events):
+        # Old controlled runs logged pre-selection context, not actual wire
+        # excerpts. Do not mislabel an archived or pending source as delivered.
+        source_count = None
+    if "live_accounting" in result:
+        source_count = result["live_accounting"]["sources_sent_to_model"]
     return {"http_attempts": requests, "successful_responses": len(request_events), "cache_hits": cached,
             "api_errors": max(usage.get("errors", 0), len(request_errors)),
             "fallbacks": sum(e["kind"] == "invalid_decision" for e in events),
             "inspected": inspected, "retrieved": retrieved, "graph": last.get("graph", {}),
+            "returned_record_observations": sum(e.get("returned_papers", 0) for e in observations),
+            "sources_sent_to_model": source_count,
+            "actions": result.get("actions", last.get("actions", 0)),
+            "rounds": result.get("rounds", last.get("round", 0)),
+            "binding_limits": result.get("binding_limits", binding_limits(result)),
             "evidence": evidence, "stop_reason": result.get("stop_reason"),
             "planner_calls": usage_llm.get("calls", len(call_events)),
             "input_tokens": usage_llm.get("input_tokens", sum(e.get("usage_delta", {}).get("input_tokens", e.get("prompt_tokens", 0)) for e in call_events)),
@@ -291,13 +468,13 @@ def paper_view(item: dict) -> dict:
 
 
 def corpus_options(root: Path = PROJECT_ROOT) -> list[str]:
-    """Discover ordinary snapshots, plus an optional user-owned reference corpus."""
+    """Discover ordinary snapshots, plus the one canonical frozen pilot copy."""
     paths = []
     for parent in (root / "data/corpus",):
         if parent.exists():
             paths += [str(p.parent.relative_to(root)) for p in parent.rglob("manifest.json")
                       if (p.parent / "papers.jsonl").is_file()]
-    pilot = root / "data/reference/corpus"
+    pilot = root / "data/frozen/three-question-pilot-v1/evidence/graph-ablation-pilot-2026-11-02/corpus"
     if (pilot / "manifest.json").is_file():
         paths.append(str(pilot.relative_to(root)))
     return sorted(set(paths))

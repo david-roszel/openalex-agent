@@ -1,37 +1,15 @@
-# CLM-inspired working-context adaptation
+# CLM-inspired working context and recovery
 
-The conventional controller selects a bounded working view from observed state.
-The CLM controller permits model-requested, schema-validated text edits to
-`active_context.txt`. A pinned envelope retains the question, policy, tool schema
-and budgets. Raw observations and graph/metadata records remain authoritative.
+The primary CLM implementation exposes a bounded active working text to model-authored edits. It is distinct from the optional official Meta conversation-editing architecture. The wrapper preserves protected system instructions, original question, scope and budgets outside editable content.
 
-Both architectures can recover archived observations under the same operational
-policy. Requested edits, committed edits, rejection/failure and subsequent actual
-inputs are recorded. An edit counts as applied only after its commit succeeds.
-A failed or uncertain commit stops use of that context; it must not appear as a
-successful synchronization event. Management/recovery calls consume the common
-inference budget and are reported separately from retrieval actions.
+`ContextPlanner` sends conventional externally selected observations or the actual current `context/active_context.txt` contents in CLM mode. Model replies may select scholarly actions or request a validated working-context edit, archive listing or bounded observation recovery. The environment, rather than the edit itself, archives authoritative observations. Edits do not grant shell/file-system execution or erase raw source provenance.
 
-The pressure diagnostic accepts horizon, evidence position, distractors,
-correction, active capacity and archive availability. It measures delivered
-study tokens and distinct source text against capacity, validates delivery and
-completion, and retains invalid conditions for audit while excluding them from
-aggregate displays. Audit storage is distinct from operational recovery access.
-Retention, initial-probe recovery and correction accuracy are distinct metrics.
+Operation receipts distinguish request, validation, commit and later input delivery. A successful edit requires durable replacement/readback; uncertainty blocks inference. Recovery has separate acceptance and later-delivery evidence. It can consume call/context capacity and is not inherently exclusive to the CLM arm. An edit or recovered snippet alone does not prove useful retention.
 
-The bundled tokenizer measures explicit study inputs, not undocumented native
-provider framing. Context inspection reports observable requests/transitions,
-not hidden reasoning. Scripted diagnostic policies are engineered correctness
-fixtures, not evidence of learned context-management skill.
+The November8 legacy correction is identified as **controlled-context-v2-capacity-stop**: limits remain enforced, capacity admission is checked, and a validated STOP with pending archived evidence can terminate. Later R7 source/policies and observed M exposure failures remain separate, not silently relabeled as this correction. See CLM_CAPACITY_TERMINATION_CORRECTION.md and versions/revision7.
 
-This adaptation provides no model training, reinforcement learning, unrestricted
-shell, arbitrary filesystem access, full chat-role rewriting, provider-native
-context-window control, or compute-cache reuse. It does not reproduce another
-project's training harness or establish equivalent published benchmark scores.
-No superiority claim follows from a successful edit or a synthetic retention run.
+The public app additionally provides evidence-aware research planning and terminal synthesis under its own profile. Metadata may be reloaded at synthesis, so a source-traceable final answer is not a pure active-memory test. Actual graph delivery and CLM persistence are recorded, but their causal utility or retention superiority is unestablished.
 
-The November 8 policy preserves all capacity bounds and accepts validated STOP
-with pending archived observations. Memory-management failures do not justify
-acquisition fallback. See [the versioned correction](CLM_CAPACITY_TERMINATION_CORRECTION.md)
-and [official Meta integration](SEVEN_ARCHITECTURES.md); the latter is a separate
-conversation-editing architecture, not this inspired text-file adaptation.
+Optional active/input token ceilings use the packaged checksum-verified study tokenizer; provider billing/framing equivalence is not claimed. Character, context, action, token, call and spending limits remain distinct. No budget increase or memory policy optimization is introduced by this GitHub preparation.
+
+Official Meta uses its original restricted conversation renderer, parser, synchronizer/edit gate and rollback behavior. It is exploratory; see SEVEN_ARCHITECTURES.md and vendored notices. Both mechanisms require source/prompt/provider identities in future experiments, with historical traces left unchanged.

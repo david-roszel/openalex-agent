@@ -22,7 +22,24 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install development and UI dependencies
         run: python -m pip install -e '.[dev,ui]'
-      - name: Inspect tracked publication files without disclosing secrets
-        run: python scripts/repository_audit.py --staged
-      - name: Run offline suite
-        run: python -m pytest
+      - name: Inspect exact tracked publication files and source manifest
+        run: |
+          python scripts/repository_audit.py --staged
+          python scripts/verify_manifest.py
+      - name: Run current application suite without real IP networking
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          PYTHONPATH: integration/offline_guard:.
+        run: python -m pytest -p no:cacheprovider
+      - name: Test isolated frozen R7 scorer and atomic scheduler
+        working-directory: versions/revision7
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          PYTHONPATH: ../../integration/offline_guard:.
+        run: python -m pytest -p no:cacheprovider tests
+      - name: Test read-only legacy monitor with synthetic records
+        working-directory: tools/legacy-monitor
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          PYTHONPATH: ../../integration/offline_guard:.
+        run: python -m pytest -p no:cacheprovider test_monitor.py

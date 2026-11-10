@@ -11,9 +11,12 @@ from openalex_agent.models import Paper
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_only_synthetic_public_example_questions_are_distributed():
+def test_public_questions_are_examples_or_explicit_development_manifest():
     assert {p.name for p in (ROOT/'benchmarks').iterdir()} == {
-        'README.md','example_questions.json','example_factual_questions.json','example_review_candidates.json'}
+        'README.md','example_questions.json','example_factual_questions.json','example_review_candidates.json','live_submission_v1'}
+    development=ROOT/'benchmarks/live_submission_v1'
+    assert {p.name for p in development.iterdir()} == {'questions.json'}
+    assert not list((ROOT/'benchmarks').rglob('*heldout*.json'))
     questions=json.loads((ROOT/'benchmarks/example_questions.json').read_text())
     assert len(questions)==3 and all(q['split']=='diagnostic' for q in questions)
     records=[Paper.from_dict(json.loads(line)) for line in (ROOT/'tests/fixtures/synthetic-corpus/papers.jsonl').read_text().splitlines()]

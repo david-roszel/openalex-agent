@@ -1,0 +1,5 @@
+# Preserve exact frozen source/license/protocol bytes while checking new code normally.
+# These three originals contain an EOF blank line or Markdown hard line breaks.
+versions/revision7/openalex_agent/_vendor/meta_clm/LICENSE whitespace=-blank-at-eof
+versions/revision7/openalex_agent/_vendor/meta_clm/context_env/env.py whitespace=-blank-at-eof
+versions/revision7/protocols/OpenAlex_Controlled_Memory_Benchmark_V2_Protocol.md whitespace=-blank-at-eol

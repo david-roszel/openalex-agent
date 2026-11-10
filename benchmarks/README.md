@@ -1,11 +1,7 @@
-# Synthetic public examples
+# Public examples and development inputs
 
-Only `example_questions.json`, `example_factual_questions.json` and
-`example_review_candidates.json` are distributed. They are freshly authored
-synthetic regression inputs, not development/held-out research benchmarks or
-independently reviewed scientific ground truth. They contain no private questions
-or human annotations. Their 39-record corpus is under tests/fixtures/synthetic-corpus.
+`example_questions.json`, `example_factual_questions.json` and `example_review_candidates.json` are synthetic regression inputs. Their39-record synthetic corpus is under tests/fixtures/synthetic-corpus. They contain no real human judgments.
 
-Bring your own reviewed corpus/questions/annotations for empirical evaluation.
-Keep reserved questions and identities local under ignored data/. See
-[the evaluation methodology](../docs/EVALUATION.md).
+`live_submission_v1/questions.json` is the fixed eight-question development/target-identity input used by the live research runner and its tests. It is not held-out evaluation material or general relevance annotation. Only that input is released here: no private campaign traces, target-resolution receipts, approvals, answer keys or recorded-attempt outputs are copied.
+
+The separate tests/fixtures/development-corpus contains39 authentic historical metadata records for offline adapter diagnostics, with provenance. It is not the frozen30k corpus. Use your own reviewed inputs for empirical evaluation, retain independent judgments and keep sealed questions local. See ../docs/EVALUATION.md and ../docs/REPRODUCIBILITY.md.

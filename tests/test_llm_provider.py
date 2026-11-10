@@ -131,7 +131,7 @@ def test_invalid_reasoning_configuration_is_rejected_before_requests(effort):
 
 
 def test_optional_settings_from_environment(monkeypatch):
-    monkeypatch.setattr("openalex_agent.config.load_dotenv", lambda: None)
+    monkeypatch.setattr("openalex_agent.config.load_dotenv", lambda *args, **kwargs: None)
     monkeypatch.delenv("LLM_TEMPERATURE", raising=False)
     monkeypatch.delenv("LLM_REASONING_EFFORT", raising=False)
     assert Settings.from_env().llm_temperature == 0

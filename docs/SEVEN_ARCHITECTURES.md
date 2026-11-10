@@ -1,4 +1,6 @@
-# Seven-method implementation
+# Seven-method compatibility and exploratory Meta CLM
+
+The primary scientific scope is `standard`, `llm`, `llm_graph`, `clm`, `clm_graph`. Official Meta variants remain exploratory and do not upgrade the five-method evidence.
 
 `controlled-seven` contains `standard`, `llm`, `llm_graph`, `clm`, `clm_graph`,
 `meta_clm`, and `meta_clm_graph`. The six agents form graph(2) × context(3);

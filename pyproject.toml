@@ -15,6 +15,7 @@ ui = ["streamlit>=1.53,<2"]
 
 [project.scripts]
 openalex-agent = "openalex_agent.cli:main"
+openalex-research = "openalex_agent.live_cli:main"
 
 [tool.setuptools.packages.find]
 include = ["openalex_agent*"]

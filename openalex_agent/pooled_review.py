@@ -23,6 +23,8 @@ POLICY = dict(version=VERSION, lexical_depth=20, anchor_count=3, references=5,
               relevant_threshold=1, gains='2**grade-1', unknown='UNKNOWN',
               full_pool_required_for_ndcg=True)
 METHODS = ('standard','llm','llm_graph','clm','clm_graph')
+DEVELOPMENT_VERSION = 'five-method-development-collection-v1'
+DEVELOPMENT_CLM_POLICY = 'controlled-context-v2-capacity-stop'
 
 
 def sha(path):
@@ -391,3 +393,248 @@ def collect_unscored(spec_path,review_path,approval_path,settings):
             trial_seeds=tuple(spec['trial_seeds']),budget=budget,inference_limits=limits,labels_path=None)
     atomic_json(output/'collection-approval.json',a)
     return rows
+
+
+def _development_questions(path):
+    questions=json.loads(Path(path).read_text())
+    allowed={'id','question','split','discipline','stratum','review_status'}
+    if (not isinstance(questions,list) or not 1<=len(questions)<=20
+        or any(not isinstance(q,dict) or set(q)-allowed or q.get('split')!='development'
+            or not isinstance(q.get('id'),str) or not q['id'].strip()
+            or not isinstance(q.get('question'),str) or not 1<=len(q['question'].strip())<=1000 for q in questions)
+        or len({q['id'] for q in questions})!=len(questions)):
+        raise ValueError('Use 1–20 unique development questions without truth/annotation fields')
+    return questions
+
+
+def _development_facts(path,questions):
+    if path is None:return None
+    facts=json.loads(Path(path).read_text())
+    if (not isinstance(facts,list) or len(facts)!=len(questions)
+        or any(not isinstance(f,dict) or set(f)!={'query_id','question_id','question'}
+            or any(not isinstance(v,str) or not 1<=len(v.strip())<=1000 for v in f.values()) for f in facts)
+        or {f['query_id'] for f in facts}!={q['id'] for q in questions}
+        or len({f['question_id'] for f in facts})!=len(facts)):
+        raise ValueError('Supply one public factual task per DEV question, without verified answers or judgments')
+    return facts
+
+
+def development_review_ready(path,questions):
+    """Question/source review is separate from later, blinded relevance grades."""
+    rows=csv_rows(path)
+    by_id={q['id']:q['question'] for q in questions}
+    return (len(rows)==len(questions) and {r.get('query_id') for r in rows}==set(by_id)
+        and all(r.get('question')==by_id[r['query_id']] and r.get('split')=='development'
+            and r.get('validity')=='approved' and r.get('taxonomy_verified')=='true'
+            and r.get('source_adequacy')=='sufficient' and r.get('independent_human_review')=='true'
+            and all(r.get(k,'').strip() for k in ('reviewer_id','reviewed_at','explanation')) for r in rows))
+
+
+def _development_prompt(completion_guidance,factual):
+    from .actions import CONTROLLED_TOOL_CONTRACT
+    from .research_completion import VERSION as completion_version, SUFFIX
+    from .factual_protocol import VERSION as factual_version, INSTRUCTIONS
+    if completion_guidance not in (None,completion_version):
+        raise ValueError('Unknown shared research-completion instruction version')
+    return dict(completion_guidance=completion_guidance,
+        completion_suffix=SUFFIX if completion_guidance else None,
+        planner_template_sha256=sha(Path(__file__).with_name('context_planner.py')),
+        acquisition_contract_sha256=digest(CONTROLLED_TOOL_CONTRACT),
+        factual_protocol=factual_version if factual else None,
+        factual_instructions_sha256=digest(INSTRUCTIONS) if factual else None,
+        claim_elicitation='fixed terminal opportunity' if factual else 'optional planning claims; unequal answer opportunities',
+        baseline='single-search, no LLM or factual-response call')
+
+
+def prepare_development(corpus_path,questions_path,output,settings,*,factual_questions=None,
+                        completion_guidance=None,action_budgets=(3,),trials=1,max_llm_calls=6):
+    """Offline proposal only; deliberately creates no approval or human judgments."""
+    from .context_planner import InferenceLimits
+    from .controller import Budget
+    from .development_pilot import REQUEST_RESERVE
+    from .gemini_validation import GeminiValidationBackend
+    from .git_provenance import git_provenance
+    from .meta_validation import code_pins
+    questions=_development_questions(questions_path)
+    facts=_development_facts(factual_questions,questions)
+    prompt=_development_prompt(completion_guidance,facts is not None)
+    if (type(trials) is not int or not 1<=trials<=3 or type(max_llm_calls) is not int
+        or not (2 if facts is not None else 1)<=max_llm_calls<=20 or not action_budgets
+        or len(set(action_budgets))!=len(action_budgets)
+        or any(type(v) is not int or not 1<=v<=20 for v in action_budgets)):
+        raise ValueError('Use bounded DEV actions, one to three trials and at most twenty total calls per agent')
+    corpus=LocalCorpus(corpus_path)
+    out=fresh(output).resolve()
+    shutil.copyfile(questions_path,out/'questions.json')
+    if factual_questions:shutil.copyfile(factual_questions,out/'factual-questions.json')
+    csv_write(out/'question-review.template.csv',[dict(query_id=q['id'],split='development',question=q['question'],
+        discipline=q.get('discipline',''),validity='UNKNOWN',taxonomy_verified='UNKNOWN',source_adequacy='UNKNOWN',
+        independent_human_review='',reviewer_id='',reviewed_at='',explanation='') for q in questions])
+    budget=Budget(max_actions=max(action_budgets),max_rounds=20,max_llm_calls=max_llm_calls,page_size=10)
+    limits=InferenceLimits(max_total_tokens=100000,max_active_tokens=4096,max_input_tokens=8192)
+    spec=dict(protocol=DEVELOPMENT_VERSION,purpose='UNSCORED DEVELOPMENT COLLECTION ONLY',suite='controlled-five',
+        methods=list(METHODS),corpus=str(Path(corpus_path).resolve()),corpus_sha256=corpus.fingerprint,
+        corpus_manifest_sha256=sha(Path(corpus_path)/'manifest.json'),questions=str(out/'questions.json'),
+        questions_sha256=sha(out/'questions.json'),question_source_sha256=sha(questions_path),
+        factual_questions=str(out/'factual-questions.json') if facts is not None else None,
+        factual_questions_sha256=sha(out/'factual-questions.json') if facts is not None else None,
+        question_review_template=str(out/'question-review.template.csv'),
+        question_review_template_sha256=sha(out/'question-review.template.csv'),
+        provider=GeminiValidationBackend.profile(settings),prompt=prompt,
+        clm_policy=DEVELOPMENT_CLM_POLICY,policy=POLICY,policy_sha256=digest(POLICY),
+        action_budgets=list(action_budgets),trials=trials,trial_seeds=[11,23,37][:trials],
+        budget=asdict(budget),inference_limits=asdict(limits),
+        max_provider_calls=len(questions)*4*trials*len(action_budgets)*max_llm_calls,
+        spending_ceiling_usd=6,checkpoint_usd=3,request_reservation_usd=str(REQUEST_RESERVE),
+        wall_seconds=7200,automatic_retries=0,source_pins=code_pins(),git=git_provenance(),
+        output=str(out/'execution/benchmark'),final_evaluation_authorized=False)
+    atomic_json(out/'spec.json',spec)
+    return check_development(out/'spec.json')
+
+
+def check_development(spec_path,review_path=None):
+    """Check exact inputs/pins offline; never constructs a provider or approves it."""
+    from .context_planner import CONTEXT_POLICY_VERSION, InferenceLimits
+    from .controller import Budget
+    from .development_pilot import REQUEST_RESERVE
+    from .gemini import GeminiSettings
+    from .gemini_validation import GeminiValidationBackend
+    from .meta_validation import code_pins
+    from dataclasses import fields
+    spec=json.loads(Path(spec_path).read_text())
+    required={'protocol','purpose','suite','methods','corpus','corpus_sha256','corpus_manifest_sha256',
+        'questions','questions_sha256','question_source_sha256','factual_questions','factual_questions_sha256',
+        'question_review_template','question_review_template_sha256','provider','prompt','clm_policy','policy','policy_sha256',
+        'action_budgets','trials','trial_seeds','budget','inference_limits','max_provider_calls',
+        'spending_ceiling_usd','checkpoint_usd','request_reservation_usd','wall_seconds','automatic_retries',
+        'source_pins','git','output','final_evaluation_authorized'}
+    if (set(spec)!=required or spec['protocol']!=DEVELOPMENT_VERSION or spec['purpose']!='UNSCORED DEVELOPMENT COLLECTION ONLY'
+        or spec['suite']!='controlled-five' or spec['methods']!=list(METHODS)
+        or spec['clm_policy']!=DEVELOPMENT_CLM_POLICY or CONTEXT_POLICY_VERSION!=DEVELOPMENT_CLM_POLICY
+        or spec['policy']!=POLICY or spec['policy_sha256']!=digest(POLICY)
+        or spec['source_pins']!=code_pins() or spec['final_evaluation_authorized'] is not False
+        or spec['spending_ceiling_usd']!=6 or spec['checkpoint_usd']!=3 or spec['wall_seconds']!=7200
+        or spec['request_reservation_usd']!=str(REQUEST_RESERVE) or spec['automatic_retries']!=0):
+        raise ValueError('Development protocol, methods, CLM policy, source or safeguards differ from preparation')
+    settings=GeminiSettings(**{f.name:spec['provider'][f.name] for f in fields(GeminiSettings)})
+    if spec['provider']!=GeminiValidationBackend.profile(settings):raise ValueError('Provider profile changed')
+    questions=_development_questions(spec['questions'])
+    facts=_development_facts(spec['factual_questions'],questions)
+    if (sha(spec['questions'])!=spec['questions_sha256'] or
+        sha(Path(spec['corpus'])/'manifest.json')!=spec['corpus_manifest_sha256'] or
+        sha(Path(spec['corpus'])/'papers.jsonl')!=spec['corpus_sha256'] or
+        sha(spec['question_review_template'])!=spec['question_review_template_sha256'] or
+        (sha(spec['factual_questions']) if facts is not None else None)!=spec['factual_questions_sha256']):
+        raise ValueError('Frozen corpus, questions or public factual tasks changed')
+    if spec['prompt']!=_development_prompt(spec['prompt']['completion_guidance'],facts is not None):
+        raise ValueError('Prompt identity changed')
+    budget=Budget(**spec['budget']);limits=InferenceLimits(**spec['inference_limits'])
+    actions=spec['action_budgets'];trials=spec['trials']
+    if (type(trials) is not int or not 1<=trials<=3 or spec['trial_seeds']!=[11,23,37][:trials]
+        or not actions or len(set(actions))!=len(actions) or any(type(v) is not int or not 1<=v<=20 for v in actions)
+        or not (2 if facts is not None else 1)<=budget.max_llm_calls<=20
+        or spec['budget']!=asdict(Budget(max_actions=max(actions),max_rounds=20,max_llm_calls=budget.max_llm_calls,page_size=10))
+        or spec['inference_limits']!=asdict(InferenceLimits(max_total_tokens=100000,max_active_tokens=4096,max_input_tokens=8192))
+        or spec['max_provider_calls']!=len(questions)*4*trials*len(actions)*budget.max_llm_calls):
+        raise ValueError('Shared developmental budgets differ from supported resource ceilings')
+    review=Path(review_path or spec['question_review_template'])
+    ready=development_review_ready(review,questions)
+    pins=dict(spec_sha256=sha(spec_path),question_review_sha256=sha(review),questions_sha256=spec['questions_sha256'],
+        factual_questions_sha256=spec['factual_questions_sha256'],corpus_sha256=spec['corpus_sha256'],
+        source_sha256=digest(spec['source_pins']),provider_profile_sha256=digest(spec['provider']),
+        prompt_sha256=digest(spec['prompt']),budget_sha256=digest([spec['budget'],spec['inference_limits'],actions,trials,spec['trial_seeds']]),
+        clm_policy=DEVELOPMENT_CLM_POLICY,policy_sha256=digest(POLICY))
+    return dict(protocol=DEVELOPMENT_VERSION,configuration_valid=True,question_review_ready=ready,
+        approval_protocol=VERSION,approval_stage='collect-development',approval_required=True,pins=pins,
+        planned_trajectories=len(questions)*5*trials*len(actions),max_provider_calls=spec['max_provider_calls'],
+        grounding_measurement='fixed terminal opportunity' if facts is not None else 'planning claims only; unequal answer opportunities',
+        hosted_calls=0)
+
+
+def collect_development(spec_path,review_path,approval_path,*,transport=None):
+    """Use the same five-method runner and Gemini ledger; never final/held-out."""
+    from dataclasses import fields
+    import time
+    from .context_planner import InferenceLimits
+    from .controller import Budget
+    from .execution_control import ExperimentStopped
+    from .experiments import run_experiments
+    from .gemini import GeminiSettings
+    from .gemini_validation import GeminiSpendLedger, GeminiValidationBackend
+    from .storage import Database
+    checked=check_development(spec_path,review_path)
+    if not checked['question_review_ready']:raise ValueError('Independent DEV question/source review is incomplete')
+    a=approval(approval_path,'collect-development',checked['pins'])
+    if (a.get('development_only') is not True or a.get('paid_inference_authorized') is not True
+        or a.get('final_evaluation_authorized') is not False):
+        raise ValueError('Explicit paid development-only approval is required; final evaluation stays unauthorized')
+    authorization_sha256=sha(approval_path)
+    spec=json.loads(Path(spec_path).read_text())
+    benchmark=Path(spec['output']);execution=fresh(benchmark.parent)
+    atomic_json(execution/'spec.json',spec)
+    snapshots={'questions':execution/'questions.json','review':execution/'question-review.csv'}
+    for name,source,checksum in [('questions',spec['questions'],spec['questions_sha256']),
+                                 ('review',review_path,checked['pins']['question_review_sha256'])]:
+        shutil.copyfile(source,snapshots[name])
+        if sha(snapshots[name])!=checksum:raise ValueError('Input changed while creating the execution snapshot')
+    snapshots['facts']=None
+    if spec['factual_questions']:
+        snapshots['facts']=execution/'factual-questions.json'
+        shutil.copyfile(spec['factual_questions'],snapshots['facts'])
+        if sha(snapshots['facts'])!=spec['factual_questions_sha256']:raise ValueError('Public factual tasks changed during snapshot')
+    settings=GeminiSettings(**{f.name:spec['provider'][f.name] for f in fields(GeminiSettings)})
+    ledger=GeminiSpendLedger(execution/'spending-ledger.json',spec['spending_ceiling_usd'],
+        checkpoint=spec['checkpoint_usd'],max_calls=spec['max_provider_calls'],max_seconds=spec['wall_seconds'])
+    guarded=GeminiValidationBackend.guarded_factory(settings,ledger,transport=transport)
+    def progress():
+        # Request admission (including reservations/call ceiling) remains solely
+        # in the existing ledger. Global stops also apply immediately after a
+        # response and between trajectories, including a non-LLM baseline.
+        reason=ledger.stop_reason
+        if ledger.clock()-ledger.started>=ledger.max_seconds:reason='pilot_wall_clock_limit'
+        elif any(row['usage']=='UNKNOWN' for row in ledger.attempts):reason='development_unaccountable_usage'
+        elif ledger.reported_spend>=ledger.checkpoint:reason='pilot_three_dollar_checkpoint'
+        if reason:
+            ledger.stop_reason=reason;ledger.save();raise ExperimentStopped(reason)
+        return False
+    def factory():
+        planner=guarded();request=planner._request
+        def checked_request(body):
+            try:return request(body)
+            finally:progress()
+        planner._request=checked_request
+        return planner
+    status='running'
+    try:
+        with Database(str(execution/'metadata.sqlite')) as db:
+            run_experiments(spec['corpus'],str(snapshots['questions']),db,factory,output=str(benchmark),
+                suite='controlled-five',methods=METHODS,action_budgets=tuple(spec['action_budgets']),
+                trials=spec['trials'],trial_seeds=tuple(spec['trial_seeds']),budget=Budget(**spec['budget']),
+                inference_limits=InferenceLimits(**spec['inference_limits']),labels_path=None,
+                factual_questions_path=str(snapshots['facts']) if snapshots['facts'] else None,
+                completion_guidance=spec['prompt']['completion_guidance'] is not None,cancel_check=progress)
+        status='complete'
+    except ExperimentStopped as exc:status=exc.reason
+    except BaseException:
+        status='failed';raise
+    finally:
+        receipt=dict(protocol=DEVELOPMENT_VERSION,status=status,pins=checked['pins'],
+            approval_sha256=authorization_sha256,
+            authorization_provenance=dict(protocol=a['protocol'],stage=a['stage'],approver=a['approver'],approved_at=a['approved_at']),
+            classification='MOCKED OFFLINE TEST' if transport else 'HOSTED DEVELOPMENT ONLY',
+            completed_trajectories=len(csv_rows(benchmark/'metrics.csv')) if (benchmark/'metrics.csv').exists() else 0,
+            provider_attempts=len(ledger.attempts),reported_gross_cost_usd=str(ledger.reported_spend),
+            retained_usd=str(ledger.charged),runtime_seconds=time.monotonic()-ledger.started,
+            stop_reason=ledger.stop_reason,final_evaluation_authorized=False,
+            measurement_policy=dict(relevance='existing blinded pooled 0–2 review, scored separately',
+                grounding='independent claim/factual judgments required',retention='actual delivered/recovered text, not semantic truth',
+                efficiency='reported/unknown usage, latency, cost and context-management overhead'))
+        atomic_json(execution/'collection-status.json',receipt)
+        if benchmark.is_dir():
+            # Keep accounting and identities inside the native tree so the
+            # existing immutable-output freeze includes them without a new format.
+            shutil.copyfile(ledger.path,benchmark/'spending-ledger.json')
+            shutil.copyfile(snapshots['review'],benchmark/'collection-question-review.csv')
+            atomic_json(benchmark/'development-spec.json',spec)
+            atomic_json(benchmark/'development-collection.json',receipt)
+    return receipt

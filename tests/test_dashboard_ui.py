@@ -12,7 +12,7 @@ from openalex_agent import dashboard_ui
 from openalex_agent.config import Settings
 from openalex_agent.experiment_dashboard import DashboardConfig,start_dashboard
 
-APP=str(Path(__file__).resolve().parents[1]/"app.py")
+APP=str(Path(__file__).resolve().parents[1]/"legacy_app.py")
 
 
 def widget(app,kind,label):return next(e for e in app.get(kind) if e.label==label)
@@ -89,7 +89,7 @@ def test_saved_multiple_experiments_open_without_new_execution(ui,tmp_path,monke
 
 
 def test_reserved_question_cannot_bypass_approval_through_individual_page(ui,tmp_path,monkeypatch):
-    directory=tmp_path/"benchmarks";directory.mkdir(parents=True)
+    directory=tmp_path/"benchmarks";directory.mkdir()
     (directory/"research_heldout.proposed.json").write_text(json.dumps([dict(question="Reserved final question")]))
     monkeypatch.setattr(web_ui,"start_research",lambda *a,**kw:pytest.fail("Reserved questions cannot launch here"))
     widget(ui,"text_area","Research question").set_value("Reserved final question")

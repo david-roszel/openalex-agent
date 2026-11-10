@@ -19,7 +19,47 @@ from test_clm_context import planner, context, STOP
 from test_gemini_adc import model, response
 from test_planner_tool_contract import corpus
 
-# Historical development snapshots and their eight replay cases remain private.
+CASES=json.loads((Path(__file__).parent/'fixtures/clm-pending-overflows.dev.json').read_text())['cases']
+
+
+@pytest.mark.parametrize('case',CASES,ids=lambda c:f"{c['architecture']}-{c['query_id']}-trial{c['trial']}-call{c['source_call']}")
+def test_all_eight_historical_candidates_keep_their_limits_and_do_not_fall_back(tmp_path,case):
+    original=deepcopy(case['original_output'])
+    stopping=original['decision']['action']=='STOP_RETRIEVAL'
+    outputs=[original] if stopping else [original,{'context_edit':dict(path='active_context.txt',op='replace',text='RETAINED DEVELOPMENT SNAPSHOT')},STOP]
+    base,wire=model(lambda body,n:response(text=json.dumps(outputs[n-1]),n=n))
+    p=ContextPlanner(base,mode='clm',limits=InferenceLimits(**case['limits']))
+    events=[];observed={d['id']:Paper.from_dict(d) for d in case['observed_papers']}
+    p.bind(tmp_path/'run',case['question'],Budget(**case['budget']),lambda k,v:events.append(dict(kind=k,**v)),lambda:observed)
+    try:
+        p.store.transition(case['active'],source='environment',operation={'SYNTHETIC_OFFLINE_RESTORE':True})
+        for archive in case['archives_before']:p.store.archive(archive)
+        p._seen=deepcopy(case['seen_before']);p._pending=case['pending_before'];p._pending_indices=case['pending_indices_before'][:]
+        before={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in p.store.directory.glob('observation-*.json')}
+        action=p.decide(deepcopy(case['current_context']))
+        first=json.loads((p.store.directory/'request-00001.json').read_text())
+        assert first['input']==case['original_input']
+        for path in p.store.directory.glob('request-*.json'):
+            saved=json.loads(path.read_text())
+            assert not p.capacity_measurements(saved['input'],system=saved['system'])['violated_limits']
+        assert action['action']=='STOP_RETRIEVAL' and len(wire)==(1 if stopping else 3)
+        blocked=[e for e in events if e['kind']=='context_admission' and e['status']=='pending']
+        assert blocked and blocked[0]['capacity']['violated_limits']==['serialized_user_payload_chars']
+        cap=blocked[0]['capacity']
+        assert cap['active_tokens']<=4096 and cap['full_input_tokens']<=8192
+        assert cap['serialized_user_payload_chars']>16000 and cap['selected_working_context_chars']<16000
+        if stopping:
+            assert p.store.read()==case['active'] and len(p._pending)==case['original_input']['pending_observation_chars']
+            assert not [e for e in events if e['kind']=='context_management_required']
+        else:
+            assert not p._pending and any(e['kind']=='context_management_required' for e in events)
+            assert any(e['kind']=='context_edit' and e['committed'] for e in events)
+            assert any(e['kind']=='context_admission' and e['status']=='admitted' for e in events)
+        assert all(hashlib.sha256((p.store.directory/name).read_bytes()).hexdigest()==digest for name,digest in before.items())
+        assert p.store.recover(len(case['archives_before']))=={k:v for k,v in case['current_context'].items() if k not in ('question','round','remaining','permitted_actions','retrieval','proposals')}
+        assert p.budget.__dict__==case['budget'] and asdict(p.limits)==case['limits']
+        assert p.configuration['context_policy']==CONTEXT_POLICY_VERSION
+    finally:p.close()
 
 
 def pressure(p,c,reserve=100):

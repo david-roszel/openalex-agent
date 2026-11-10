@@ -203,6 +203,9 @@ def display(papers: list[Paper], *, details: bool = False) -> None:
 
 
 def main() -> None:
+    if sys.argv[1:2] == ["research"]:
+        from .live_cli import main as research_main
+        raise SystemExit(research_main(sys.argv[2:]))
     parser = argparse.ArgumentParser(description="Graph-guided academic literature discovery")
     parser.add_argument("--db", help="SQLite metadata/cache path")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -368,3 +371,7 @@ def main() -> None:
     except sqlite3.Error as exc:
         print(f"Error: database operation failed ({type(exc).__name__}); check --db and write permissions", file=sys.stderr)
         raise SystemExit(1) from None
+
+
+if __name__ == "__main__":
+    main()

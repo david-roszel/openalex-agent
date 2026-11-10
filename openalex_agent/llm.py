@@ -187,6 +187,7 @@ class HostedJSONPlanner:
                 body["temperature"] = self.settings.llm_temperature
             if self.settings.llm_reasoning_effort:
                 body["reasoning_effort"] = self.settings.llm_reasoning_effort
+            body.update(getattr(self, "request_options", {}))
             try:
                 # Read the same non-streaming JSON response in two phases so
                 # provider/network waiting can be separated from body transfer.
@@ -210,6 +211,7 @@ class HostedJSONPlanner:
             if not isinstance(payload, dict):
                 raise PlannerError("invalid_envelope")
             self._record_usage(payload.get("usage"))
+            self.last_response_metadata = {k: payload.get(k) for k in ("id", "model", "service_tier")}
             usage = payload.get("usage")
             if isinstance(usage, dict):
                 for key in ("prompt_tokens", "completion_tokens", "total_tokens"):

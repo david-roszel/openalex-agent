@@ -76,12 +76,13 @@ class MetaEngineeringModel(EngineeringContextModel):
 
 
 class MetaContextPlanner(ContextPlanner):
-    def __init__(self,base,*,limits=None,require_evidence=False):
+    def __init__(self,base,*,limits=None,require_evidence=False,completion_guidance=False):
         if not hasattr(base,'_call_native'):
             raise ValueError('Meta CLM requires the explicit Responses-native transport or an offline native script')
         if require_evidence:
             raise ValueError('Per-decision legacy evidence envelopes are unsupported for Meta; use the common fixed terminal factual opportunity')
-        super().__init__(base,mode='conventional',limits=limits,require_evidence=False)
+        super().__init__(base,mode='conventional',limits=limits,require_evidence=False,
+                         completion_guidance=completion_guidance)
         self.mode='meta_clm'
         provenance=reference_provenance()
         self.configuration.update(context_management='meta_clm',context_policy=META_VERSION,
@@ -102,6 +103,9 @@ class MetaContextPlanner(ContextPlanner):
         self.store=MetaConversation(directory,question,budget,sink)
         self.messages=[{'role':'system','content':CONTROLLED_TOOL_CONTRACT+META_INSTRUCTIONS},
                        {'role':'user','content':question}]
+        if self.completion_guidance:
+            from .research_completion import clarify
+            self.messages[0]['content'] = clarify(self.messages[0]['content'])
         self.store.set_limit(self.messages,self.limits.max_active_tokens)
 
     def close(self):

@@ -48,8 +48,8 @@ def test_unavailable_revisions_never_invent_commit_or_leak_error(monkeypatch, ca
     assert revision.git_provenance() == {"commit": None, "dirty": None, "status": expected}
 
 
-def test_portable_synthetic_fixture_is_complete_and_checksummed():
-    directory=Path(__file__).parent/"fixtures/synthetic-corpus"
+def test_portable_real_metadata_fixture_is_complete_and_checksummed():
+    directory=Path(__file__).parent/"fixtures/development-corpus"
     receipt=json.loads((directory/"fixture-provenance.json").read_text())
     assert receipt["count"]==len(LocalCorpus(directory).papers)==39
     for name, digest in receipt["files"].items():
@@ -79,9 +79,9 @@ def test_publication_scan_does_not_follow_symlink_to_secret(tmp_path):
     assert report["inventory"][0]["bytes"]==0
 
 
-@pytest.mark.parametrize("name",[".env",".env.local","data/frozen/manifest.json",".streamlit/secrets.toml",".venv/a","local.pem","a.sqlite-wal"])
+@pytest.mark.parametrize("name",[".env",".env.local","data/frozen/manifest.json",".streamlit/secrets.toml",".venv/a","local.pem","a.sqlite-wal","credentials/grader.env","private-dist/grading.zip","developer.env","questions.private.json","benchmark_heldout.json"])
 def test_local_files_excluded_without_excluding_fixtures(name):
     assert local_only(name)
     assert not local_only(".env.example")
-    assert not local_only("tests/fixtures/synthetic-corpus/papers.jsonl")
+    assert not local_only("tests/fixtures/development-corpus/papers.jsonl")
     assert not local_only("openalex_agent/tokenizer_data/o200k_base.tiktoken")

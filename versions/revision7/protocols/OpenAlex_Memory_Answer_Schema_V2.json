@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openalex-agent.local/schemas/memory-answer-v2.json",
+  "title": "OpenAlex controlled memory six-probe final answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["q1", "q2", "q3", "q4", "q5", "q6"],
+  "properties": {
+    "q1": {"$ref": "#/$defs/work"},
+    "q2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["year"],
+      "properties": {"year": {"type": "integer", "minimum": 1, "maximum": 2100}}
+    },
+    "q3": {"$ref": "#/$defs/work"},
+    "q4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["citing_work_id", "cited_work_id"],
+      "properties": {
+        "citing_work_id": {"$ref": "#/$defs/openalexWorkId"},
+        "cited_work_id": {"$ref": "#/$defs/openalexWorkId"}
+      }
+    },
+    "q5": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/openalexWorkId"}
+        }
+      }
+    },
+    "q6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {"status": {"enum": ["SUPPORTED", "NOT_ESTABLISHED"]}}
+    }
+  },
+  "$defs": {
+    "openalexWorkId": {"type": "string", "pattern": "^W[0-9]+$"},
+    "work": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work_id"],
+      "properties": {"work_id": {"$ref": "#/$defs/openalexWorkId"}}
+    }
+  }
+}

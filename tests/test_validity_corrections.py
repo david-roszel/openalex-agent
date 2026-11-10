@@ -184,7 +184,7 @@ def test_four_cell_token_limited_wire_isolation_and_committed_edit(tmp_path):
 
 
 def test_claim_time_provenance_is_authoritative_and_versioned(tmp_path):
-    paper,_=synthetic_sources()
+    paper,_=real_sources()
     claim=dict(statement="test",work_id=paper.id,evidence_quote=paper.title,insufficient=False)
     provenance=dict(schema_version=1,model_call=2,source_observed_at_claim=True,
                     source_accessible_at_claim=True,source_record=paper.to_dict())
@@ -217,13 +217,13 @@ def test_pressure_is_measured_and_shared_not_inferred_from_paper_count(tmp_path,
     # No assertion about which architecture wins; both retain recovery access.
 
 
-def synthetic_sources():
-    path=Path(__file__).parent / "fixtures" / "synthetic-corpus" / "papers.jsonl"
+def real_sources():
+    path=Path(__file__).parent / "fixtures" / "development-corpus" / "papers.jsonl"
     return [Paper.from_dict(json.loads(line)) for line in path.read_text().splitlines()[:2]]
 
 
-def test_synthetic_corpus_sources_access_support_wrong_attribution_contradiction_and_unknown(tmp_path):
-    retrieved,unretrieved=synthetic_sources()
+def test_real_corpus_sources_access_support_wrong_attribution_contradiction_and_unknown(tmp_path):
+    retrieved,unretrieved=real_sources()
     base=dict(statement="This study compares six scholarly network types.",work_id=retrieved.id,
               evidence_quote=(retrieved.abstract or "").split(". ")[0]+".",insufficient=False)
     observed={retrieved.id:retrieved}
@@ -231,7 +231,7 @@ def test_synthetic_corpus_sources_access_support_wrong_attribution_contradiction
         validate_evidence({**base,"work_id":unretrieved.id},observed),
         validate_evidence({**base,"work_id":"not-an-openalex-id"},observed),
         validate_evidence({**base,"statement":"This study only examines one scholarly network type."},observed)]
-    # Controlled known-outcome labels about synthetic source text, not a
+    # Controlled known-outcome labels about actual source abstracts, not a
     # claim of independent research judgments for the eventual benchmark.
     judgments=[("supported","true"),("unsupported","false"),("unsupported","false"),("contradicted","false")]
     run=tmp_path/"run";run.mkdir()
@@ -260,7 +260,7 @@ def test_synthetic_corpus_sources_access_support_wrong_attribution_contradiction
 
 
 def test_future_observation_does_not_retroactively_validate_a_claim(tmp_path):
-    p,_=synthetic_sources()
+    p,_=real_sources()
     record=dict(statement="early",work_id=p.id,evidence_quote="",insufficient=False)
     events=[dict(kind="start",event_seq=1),dict(kind="evidence_record",event_seq=2,**record),
             dict(kind="observation",event_seq=3,papers=[p.to_dict()])]

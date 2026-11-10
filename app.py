@@ -1,5 +1,5 @@
-"""Launch locally: streamlit run app.py"""
+"""Submission entry point: streamlit run app.py."""
 
-from openalex_agent.web_ui import main
+from openalex_agent.live_ui import main
 
 main()
