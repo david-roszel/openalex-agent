@@ -1,5 +1,5 @@
 # Python environments, builds and caches.
-.venv/
+.venv
 venv/
 __pycache__/
 *.py[cod]
@@ -26,6 +26,17 @@ coverage.xml
 *.pfx
 credentials*.json
 service-account*.json
+service_account*.json
+application_default_credentials.json
+client_secret*.json
+.gcloud/
+gcloud/
+*.private.json
+*.crt
+*.cer
+*.der
+id_rsa
+id_ed25519
 .aws/
 
 # Experiment archives, acquired corpora, databases and generated outputs.
@@ -40,6 +51,37 @@ service-account*.json
 /results/
 /outputs/
 /artifacts/
+/logs/
+/traces/
+provider-requests.jsonl
+provider-responses.jsonl
+hosted-requests.jsonl
+hosted-responses.jsonl
+spending-ledger.json
+request-receipts.jsonl
+
+# Private evaluation inputs/labels; public examples and source manifests stay visible.
+*heldout*.json
+*heldout*.jsonl
+*heldout*.csv
+*heldout*.yaml
+*heldout*.yml
+*held-out*.json
+*held-out*.jsonl
+*held-out*.csv
+*held-out*.yaml
+*held-out*.yml
+*human-annotations*.csv
+*human-annotations*.json
+*human-annotations*.jsonl
+*human-labels*.csv
+*human-labels*.json
+*human-labels*.jsonl
+approval.json
+approval-template.json
+.ipynb_checkpoints/
+/notebooks/private/
+*.private.ipynb
 
 # Workstation and editor state.
 .codex/
@@ -60,6 +102,9 @@ private-dist/
 *.zip
 *.tar
 *.tar.gz
+*.tgz
+*.7z
+*.rar
 # Independent frozen runtime environments and local experiment inputs.
 versions/**/.venv/
 versions/**/data/
