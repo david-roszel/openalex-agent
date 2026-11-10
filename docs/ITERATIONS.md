@@ -1,6 +1,6 @@
 # Iterations retained in this update
 
-The public update follows the existing Git history, rather than reinitializing it or combining incompatible experiment policies. The prior published base is9b6d564 (seven-method implementation); c4bc32e is the first public version.
+The public update follows the existing Git history, rather than reinitializing it or combining incompatible experiment policies. The initial intended-public version is `c4bc32e`; `9b6d564` added seven-method support, `806d673` prepared the consolidated release, and `f76e842f` merged it on main. These commits exist; repository visibility remained private at the November 10 security review. The follow-up cleanup changes publication safeguards/documentation without replacing the frozen implementation.
 
 |Development line reviewed|Useful contribution|Public disposition|
 |---|---|---|

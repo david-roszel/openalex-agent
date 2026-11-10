@@ -1,9 +1,12 @@
 {
   "schema": 2,
   "release": "Live Research, primary-five Scientific Evaluation and isolated frozen R7 reference",
-  "prepared_at": "2026-11-10T11:22:44.774207-05:00",
-  "base_public_commit": "9b6d564f1e2f1c162ad487710947aa2c1530ce54",
+  "prepared_at": "2026-11-10T13:41:55.971018-05:00",
+  "base_public_commit": "f76e842f3f468997a5857414499c3af81c869498",
   "published_commit": null,
+  "publication_status": "Prepared cleanup inventory; this generator neither commits nor changes visibility",
+  "visibility_at_security_review": "private (2026-11-10)",
+  "historical_security_audit_commit": "f76e842f3f468997a5857414499c3af81c869498",
   "git_history_preserved": true,
   "credentials_included": false,
   "private_benchmarks_included": false,
@@ -38,8 +41,8 @@
     },
     {
       "path": ".gitignore",
-      "bytes": 1153,
-      "sha256": "15e82e2bb146240deef4264859b428c62d12a10bd9940f92071974ea54ab0ff4"
+      "bytes": 1939,
+      "sha256": "a566addbfcb782c77365cc6edb923e93799d2c8b983a570a8a75051d66daa129"
     },
     {
       "path": ".streamlit/config.toml",
@@ -48,13 +51,13 @@
     },
     {
       "path": "PUBLISHING.md",
-      "bytes": 3027,
-      "sha256": "9aa86e0bda438e84b2bd40a522eee8fb6ec24d525926efff81d75a08acd730dc"
+      "bytes": 3636,
+      "sha256": "da4ca4741c860638714cb046e87c6b516fc64b916093aad43452005d04843c3d"
     },
     {
       "path": "README.md",
-      "bytes": 10712,
-      "sha256": "df6daac845f9508827cfd4b923461a0401b7dd3bda436e7f87eea740370536b5"
+      "bytes": 11465,
+      "sha256": "90e2d5fa50fb42852b543aeb9df998d6de65bd0c4027e37f8790d1e55cdf7ab0"
     },
     {
       "path": "app.py",
@@ -133,8 +136,13 @@
     },
     {
       "path": "docs/ITERATIONS.md",
-      "bytes": 4092,
-      "sha256": "051a9158e989599e2a6238c0821e628d217d1cbdd93921f68d0f9f40aa835238"
+      "bytes": 4364,
+      "sha256": "696ab0079e08511b29e058c0b4143906df768bc3f7889cf9933d70694dd24782"
+    },
+    {
+      "path": "docs/LICENSING.md",
+      "bytes": 2604,
+      "sha256": "5a6ee31a51a73fb2c0f0859fbb4beeb354ac6e38ac265c7da876eddb1073e205"
     },
     {
       "path": "docs/POOLED_RELEVANCE_PROTOCOL.md",
@@ -148,8 +156,8 @@
     },
     {
       "path": "docs/RELEASE_NOTES.md",
-      "bytes": 1579,
-      "sha256": "cac0b1954b4f872ee32952058949a91a23a767611e5cacf71266793a03f7e8b9"
+      "bytes": 1624,
+      "sha256": "91028759b044567ded3feba6262e1f586cf4a025ee03e1eaa654b3c74e2145b2"
     },
     {
       "path": "docs/REPRODUCIBILITY.md",
@@ -167,6 +175,11 @@
       "sha256": "469aea4f71b9bf2ed686117ccc51762ef1920d742fbbaff2cc35a3812cda506a"
     },
     {
+      "path": "docs/SECURITY_REVIEW.md",
+      "bytes": 5392,
+      "sha256": "f1fa9a7803f41ff12a650fe7a0011609a576eac9986d8a9a7a00b4af20385707"
+    },
+    {
       "path": "docs/SEVEN_ARCHITECTURES.md",
       "bytes": 2644,
       "sha256": "de0133d35dce613a69520524ed00fbcbe844ee19223ad714b8d64b8f87a619ad"
@@ -178,8 +191,8 @@
     },
     {
       "path": "docs/VALIDATION.md",
-      "bytes": 2944,
-      "sha256": "ced5bbf6e3e7dea6ef8f6350f94cc566fa9df8c126ce216b5ea431b2c274ca6e"
+      "bytes": 5442,
+      "sha256": "4e59a300cc20b67aed176bdf7466db10f8c6ab6f1fe6cbbe2a7f225263763ca7"
     },
     {
       "path": "docs/live-research/CLAIM_REVIEW_RUBRIC.md",
@@ -768,8 +781,8 @@
     },
     {
       "path": "scripts/repository_audit.py",
-      "bytes": 8609,
-      "sha256": "c973ee36e4474c974d6191167813cd749546b2089af52e42760835fa114ae2ae"
+      "bytes": 10387,
+      "sha256": "bbeadfc8d46f0a586fee396e26db9f018574ef464bb1c9a0946b2f14cd32bd81"
     },
     {
       "path": "scripts/smoke_meta_clm_reference.py",
@@ -783,8 +796,8 @@
     },
     {
       "path": "scripts/update_public_manifest.py",
-      "bytes": 1912,
-      "sha256": "b0fcdb30cd332e64a6206ffa941de067cd010acfeccdff9bb232b6907142ad7c"
+      "bytes": 2171,
+      "sha256": "cf8b45603794118c79f928e21e4a13857e38b8f915ceca43b8e6ac7622c18ae4"
     },
     {
       "path": "scripts/validate_correction_delivery.py",
@@ -1059,7 +1072,7 @@
     {
       "path": "tests/test_meta_clm.py",
       "bytes": 18296,
-      "sha256": "de17e1550a52283978b3b2691adad02a009b4378c626ea5da290d5e77bbd89eb"
+      "sha256": "fa1b974b42e747316edd336a4fcea9530feb2db36c9169eebc1bdc845abe54c4"
     },
     {
       "path": "tests/test_meta_tool_contract.py",
@@ -1110,6 +1123,11 @@
       "path": "tests/test_publication_boundaries.py",
       "bytes": 1263,
       "sha256": "2eee1e8e1d729c751f1f812a22f1d0f3cf68ecfb477f7b2e6c45dbae90b0e232"
+    },
+    {
+      "path": "tests/test_publication_security.py",
+      "bytes": 4172,
+      "sha256": "3b553c733956d063983d198026e1b509bc535d9e2aa26cc5f9b918982ebe0657"
     },
     {
       "path": "tests/test_quality_collection.py",

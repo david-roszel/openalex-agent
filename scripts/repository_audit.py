@@ -20,7 +20,8 @@ ROOT_FILES = (".gitattributes", ".gitignore", ".env.example", "README.md", "pypr
               "main.py", "app.py", "live_app.py", "legacy_app.py", "launch-live-research.sh", "launch-dashboard.sh", "LICENSE", "CITATION.cff",
               ".streamlit/config.toml")
 LOCAL_DIRECTORIES = {"data", ".venv", "venv", ".git", ".aws", ".codex", ".agents",
-                     ".vscode", ".idea", "__pycache__", ".pytest_cache", "build", "dist", "private-dist", "credentials"}
+                     ".vscode", ".idea", "__pycache__", ".pytest_cache", "build", "dist", "private-dist", "credentials",
+                     ".gcloud", "gcloud", ".ipynb_checkpoints"}
 PATTERNS = {
     "provider-key pattern": re.compile(rb"(?:sk-[A-Za-z0-9_-]{20,}|gsk_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{30,})"),
     "Git-host token pattern": re.compile(rb"(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|glpat-[A-Za-z0-9_-]{20,})"),
@@ -31,14 +32,24 @@ PATTERNS = {
 
 def local_only(name):
     path = Path(name)
+    lower = path.name.lower()
     return (path.parts[:2] == ("docs", "submission")
+            or path.parts[:1] in (("logs",), ("traces",))
+            or path.parts[:2] == ("notebooks", "private")
             or any(p in LOCAL_DIRECTORIES or p.endswith(".egg-info") for p in path.parts)
             or path.name != ".env.example" and (path.name == ".env" or path.name.startswith(".env.") or path.name.endswith(".env"))
-            or path.suffix in (".pem", ".key", ".p12", ".pfx", ".pyc", ".log", ".db", ".zip", ".tar", ".gz")
+            or path.suffix in (".pem", ".key", ".p12", ".pfx", ".crt", ".cer", ".der", ".pyc", ".log", ".db", ".zip", ".tar", ".gz", ".tgz", ".7z", ".rar")
             or path.name.endswith(".private.json") or path.name in ("approval.json", "approval-template.json")
-            or path.suffix == ".json" and ("heldout" in path.name.lower() or "held-out" in path.name.lower())
+            or path.name.endswith(".private.ipynb")
+            or path.suffix in (".json", ".jsonl", ".csv", ".yaml", ".yml") and (
+                "heldout" in lower or "held-out" in lower
+                or "human-annotations" in lower or "human-labels" in lower)
+            or path.name in ("application_default_credentials.json", "id_rsa", "id_ed25519",
+                             "spending-ledger.json", "request-receipts.jsonl",
+                             "provider-requests.jsonl", "provider-responses.jsonl",
+                             "hosted-requests.jsonl", "hosted-responses.jsonl")
             or ".sqlite" in path.name
-            or path.name.startswith(("credentials", "service-account")) and path.suffix == ".json"
+            or path.name.startswith(("credentials", "service-account", "service_account", "client_secret")) and path.suffix == ".json"
             or ".streamlit" in path.parts and path.name.startswith("secrets"))
 
 
@@ -110,6 +121,22 @@ def audit(root, *, staged=False):
             concerns.append({"path": name, "type": "symlink requires explicit review"})
         if local_only(name):
             concerns.append({"path": name, "type": "local-only artifact included"})
+        # Recognize credential envelopes even when renamed. Report shape only,
+        # never values; scientific JSON and vendor provenance are unaffected.
+        if Path(name).suffix.lower() == ".json":
+            try:
+                document = json.loads(data)
+            except (ValueError, UnicodeDecodeError):
+                document = None
+            if isinstance(document, dict) and (
+                document.get("type") in ("service_account", "authorized_user", "external_account")
+                or "private_key" in document
+                or "refresh_token" in document
+                or "client_secret" in document
+                or "installed" in document and isinstance(document["installed"], dict) and "client_secret" in document["installed"]
+                or "web" in document and isinstance(document["web"], dict) and "client_secret" in document["web"]
+            ):
+                concerns.append({"path": name, "type": "provider credential JSON envelope"})
         if Path(name).name == '.env.example':
             for line in data.decode(errors='replace').splitlines():
                 if '=' in line and not line.lstrip().startswith('#'):

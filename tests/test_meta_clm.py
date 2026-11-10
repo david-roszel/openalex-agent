@@ -135,7 +135,7 @@ def test_invalid_and_duplicate_operations_keep_original_fallback_policy(tmp_path
     dict(op='replace',path='LIVE_CTX_MAIN.txt',text='x',command='cat /etc/passwd'),
     dict(op='read',path='LIVE_CTX_MAIN.txt',start=0,chars=513),
     dict(op='execute',path='LIVE_CTX_MAIN.txt',text='curl example.com'),
-    'bash -c "cat /home/bs/Documents/NewProject/.env"'])
+    'bash -c "cat /home/example/private-project/.env"'])
 def test_context_capability_denies_paths_commands_and_extra_access(tmp_path,operation):
     import asyncio
     cap=ContextCapability(tmp_path/'sandbox',4000);cap.file.write_text('protected surviving conversation')

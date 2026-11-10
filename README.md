@@ -115,10 +115,12 @@ Root and frozen tests use synthetic/mocked providers; the inherited offline guar
 
 [Observed validation](docs/VALIDATION.md), [reproducibility](docs/REPRODUCIBILITY.md), [evaluation policy](docs/EVALUATION.md), [five-method development collection](docs/FIVE_METHOD_DEVELOPMENT.md) and [pooled review](docs/POOLED_RELEVANCE_PROTOCOL.md) describe versioning and independent judgments. Relevance grades remain0–2. Missing judgments stay NOT EVALUATED; final held-out and paid collection require their existing explicit approvals. No approvals or human annotations are fabricated or shipped.
 
-`PUBLIC_MANIFEST.json` records the prepared source inventory; manifests and Git commits must both identify later experiments. Source hashes change with this update; historical runs retain their original identities. [PUBLISHING.md](PUBLISHING.md) provides the reviewed commit/push procedure. This preparation does not commit or publish automatically.
+`PUBLIC_MANIFEST.json` records the prepared source inventory; manifests and Git commits must both identify later experiments. Source hashes change with this update; historical runs retain their original identities. [PUBLISHING.md](PUBLISHING.md) provides the reviewed commit/push procedure. The recorded release `f76e842f` is committed on `origin/main`; this follow-up security/documentation cleanup is uncommitted. Repository visibility remains private pending owner action. Preparation does not commit or publish automatically.
 
 ## Data, credentials and licenses
 
 Only small fixture metadata, development/example inputs and an aggregate, qualified research-status summary are included. No30k corpus, private grading key/package, live ledger, held-out questions, human annotations, workstation state or raw hosted transcripts are included. Internal milestone/audit documents are distilled into public technical/version/limitations documentation rather than copied wholesale.
 
-Vendored Meta components retain CC BY-NC4.0, their NOTICE and pinned provenance. Tokenizer assets retain their upstream license. No new blanket project license or research-performance endorsement is inferred from this release.
+Original project code has no project-wide license grant yet; public visibility does not imply unrestricted reuse. Vendored Meta components retain CC BY-NC 4.0, their NOTICE and pinned provenance, including noncommercial restrictions. Tokenizer assets retain their MIT/OpenAI attribution. See [licensing boundaries and owner decisions](docs/LICENSING.md).
+
+The [November 10 security review](docs/SECURITY_REVIEW.md) covers the recorded release's complete enumerated Git history and locally stored unreachable content. No confirmed credentials were found; historical contact/path metadata and licensing decisions remain owner considerations. Current publication guards supplement that audit; neither tests nor a secret scan establishes scientific superiority or rules out every security vulnerability.

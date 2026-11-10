@@ -15,8 +15,11 @@ def main():
         if path.is_symlink():raise SystemExit('Symlink refused: '+name)
         raw=path.read_bytes();entries.append({'path':name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
     result={'schema':2,'release':'Live Research, primary-five Scientific Evaluation and isolated frozen R7 reference',
-      'prepared_at':datetime.now(ZoneInfo('America/New_York')).isoformat(),'base_public_commit':'9b6d564f1e2f1c162ad487710947aa2c1530ce54',
-      'published_commit':None,'git_history_preserved':True,'credentials_included':False,'private_benchmarks_included':False,
+      'prepared_at':datetime.now(ZoneInfo('America/New_York')).isoformat(),'base_public_commit':'f76e842f3f468997a5857414499c3af81c869498',
+      'published_commit':None,'publication_status':'Prepared cleanup inventory; this generator neither commits nor changes visibility',
+      'visibility_at_security_review':'private (2026-11-10)',
+      'historical_security_audit_commit':'f76e842f3f468997a5857414499c3af81c869498',
+      'git_history_preserved':True,'credentials_included':False,'private_benchmarks_included':False,
       'human_annotations_included':False,'raw_hosted_traces_included':False,'full_corpus_included':False,
       'small_authentic_and_synthetic_fixtures_included':True,'development_question_manifest_included':True,
       'audited_aggregate_status_included':True,'empirical_graph_clm_improvement_established':False,
